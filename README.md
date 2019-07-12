@@ -66,7 +66,7 @@ This file is self-explanatory.
 ### Entries example
 The following example illustrates the entries format of the package.
 
-![](example.pdf)
+![](example.png)
 
 | user_ID |   timestamp       | requested_item_ID  | referrer_item_ID  |
 | ------- |:-----------------:|:------------------:|-------------------|

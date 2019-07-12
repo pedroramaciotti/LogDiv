@@ -1,10 +1,13 @@
-# LogDiv: A Module for Diversity
+# LogDiv: A Python Module for Computing Diversity in Transaction Logs
 
-LogDiv allows to calculate diversity of log files.
+LogDiv is a Python module for the computation of the diversity of items requested by users in transaction logs.
 
-The initial purpose to calculate diversity is to study distributions of requests toward differents topics.
+It takes two inputs:
 
-Diversity can be interpreted as the mesure of equilibrium in distributions. 
+1) A log file with transactions.
+2) A file with item atributes.
+
+Computing the diversity of items requested by users is a task of interest in many fields, such as sociology, recommender systems, e-commerce, and media studies. Check the example below.
 
 ## Getting Started
 
@@ -63,9 +66,9 @@ This file is self-explanatory.
 ### Entries example
 The following example illustrates the entries format of the package.
 
-![](example.png)
+![](example.pdf)
 
-| user ID |   timestamp       | requested page ID  | referrer page ID  |
+| user_ID |   timestamp       | requested_item_ID  | referrer_item_ID  |
 | ------- |:-----------------:|:------------------:|-------------------|
 | USER 1  | 2019-7-1 15:20:23 |         P2         |         P1        |
 | USER 3  | 2019-7-1 15:20:27 |         P4         |         P2        |
@@ -73,13 +76,18 @@ The following example illustrates the entries format of the package.
 | USER 2  | 2019-7-1 15:23:30 |         P5         |         P3        |
 | USER 2  | 2019-7-1 15:23:45 |         P1         |         P5        |
 
-| page ID |   topic   | category  |
+| item_ID |   topic   | category  |
 | ------- |:---------:|:----------|
-|    P1   |  Football |  beginner |
-|    P2   |  Tennis   |  pro      |
-|    P3   |  Football |  beginner |
-|    P4   |  Tennis   |  advanced |
-|    P5   |  Rugby    |  medium   |
+|    v1   |  Football |  beginner |
+|    v2   |  Tennis   |  pro      |
+|    v3   |  Football |  beginner |
+|    v4   |  Tennis   |  advanced |
+|    v5   |  Rugby    |  medium   |
+|    v6   |  Football |  beginner |
+|    v7   |  Tennis   |  pro      |
+|    v8   |  Football |  beginner |
+|    v9   |  Tennis   |  advanced |
+|    v10  |  Rugby    |  medium   |
 
 In that example, the topic is a sport and the category is the level of the sport. 
 

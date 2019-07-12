@@ -54,7 +54,7 @@ PyDiv needs a specific format of entries to run:
 ### Entries example
 The following example illustrates the entries format of the package.
 
-![](example.pdf)
+![](example.png)
 
 | user ID |   timestamp       | requested page ID  | referrer page ID  |
 | ------- |:-----------------:|:------------------:|-------------------|

@@ -1,6 +1,6 @@
-# PyDiv: A Module for Diversity
+# LogDiv: A Module for Diversity
 
-PyDiv allows to calculate diversity of data given a specific format of entries.
+LogDiv allows to calculate diversity of log files.
 
 The initial purpose to calculate diversity is to study distributions of requests toward differents topics.
 
@@ -10,14 +10,15 @@ Diversity can be interpreted as the mesure of equilibrium in distributions.
 
 ### Prerequisites
 
-PyDiv requires:
+DivPy requires:
 
 * Python
-* Numpy
-* Pandas
-* Matplotlib
-* Graph-tool
-* tqdm
+* Numpy - Essential
+* Pandas - Essential
+* Matplotlib - Essential
+* tqdm - Optionnal: progression bar
+* Graph-tool - Optionnal: only one function requires it
+
 
 ```shell
 $ pip install numpy
@@ -28,15 +29,17 @@ $ pip install tqdm
 
 ### Installing
 
-To install PyDiv, you need to execute:
+To install LogDiv, you need to execute:
 
 ```shell
-$ pip install pydiv
+$ pip install logdiv
 ```
+
+## Specification
 
 ### Entries format
 
-PyDiv needs a specific format of entries to run:
+LogDiv needs a specific format of entries to run:
 
 - A file describing all requests under a table format, whose fields are:
 * user ID
@@ -48,6 +51,12 @@ PyDiv needs a specific format of entries to run:
 * page ID
 * topic 
 * category
+
+### YAML file
+
+Code that use LogDiv are directed by a YAML file: if you want to modify entry files, or the features you want to compute, 
+you just need to modify the YAML file, not the code itself.
+This file is self-explanatory.
 
 ## Example
 
@@ -74,7 +83,7 @@ The following example illustrates the entries format of the package.
 
 In that example, the topic is a sport and the category is the level of the sport. 
 
-### Test of PyDiv
+### Test of LogDiv
 
 To check if the module is successfully installed, and see what kind of results can be obtained, you can run the script in section example, using the entries given in the same directory.
 

@@ -41,8 +41,6 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
         start_time = timelib.time()
         print("\n   * Plotting matrix ...")
         
-    #categories = list(set(categories)-{'social','search','other'})
-
     fig, ax = plt.subplots(figsize=(6,6))
     #heatmap
     image = ax.imshow(matrix,cmap="YlGn")

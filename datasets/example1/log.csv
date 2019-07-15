@@ -1,3 +1,4 @@
+user,timestamp,requested_item,referrer_item
 user1,2019-07-03 00:00:00,v1,v4
 user1,2019-07-03 00:01:00,v4,v2
 user1,2019-07-03 00:01:10,v4,v6

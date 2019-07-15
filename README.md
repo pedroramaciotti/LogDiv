@@ -68,13 +68,24 @@ The following example illustrates the entries format of the package.
 
 ![](example.png)
 
-| user_ID |   timestamp       | requested_item_ID  | referrer_item_ID  |
-| ------- |:-----------------:|:------------------:|-------------------|
-| USER 1  | 2019-7-1 15:20:23 |         P2         |         P1        |
-| USER 3  | 2019-7-1 15:20:27 |         P4         |         P2        |
-| USER 1  | 2019-7-1 15:21:01 |         P3         |         P2        |
-| USER 2  | 2019-7-1 15:23:30 |         P5         |         P3        |
-| USER 2  | 2019-7-1 15:23:45 |         P1         |         P5        |
+|user |timestamp          |requested_item|referrer_item|
+|-----|-------------------|--------------|-------------|
+|user1|2019-07-03 00:00:00|v1            |v4           |
+|user1|2019-07-03 00:01:00|v4            |v2           |
+|user1|2019-07-03 00:01:10|v4            |v6           |
+|user1|2019-07-03 00:01:20|v4            |v6           |
+|user1|2019-07-03 00:02:00|v6            |v9           |
+|user1|2019-07-03 03:00:00|v8            |v10          |
+|user1|2019-07-03 03:01:00|v8            |v5           |
+|user2|2019-07-05 12:00:00|v3            |v5           |
+|user2|2019-07-05 12:00:30|v5            |v7           |
+|user2|2019-07-05 12:00:45|v7            |v9           |
+|user2|2019-07-05 12:01:00|v9            |v6           |
+|user3|2019-07-05 18:00:00|v10           |v5           |
+|user3|2019-07-05 18:01:15|v10           |v7           |
+|user3|2019-07-05 18:03:35|v10           |v9           |
+|user3|2019-07-05 18:06:00|v7            |v4           |
+|user3|2019-07-05 18:07:22|v5            |v2           |
 
 | item_ID |   topic   | category  |
 | ------- |:---------:|:----------|
@@ -94,4 +105,5 @@ In that example, the topic is a sport and the category is the level of the sport
 ### Test of LogDiv
 
 To check if the module is successfully installed, and see what kind of results can be obtained, you can run the script in section example, using the entries given in the same directory.
+
 

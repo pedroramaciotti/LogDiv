@@ -1,2 +1,7 @@
 # .DS_store
 .DS_Store
+
+# directories for PyPi
+logdiv.egg-info/
+build/
+dist/

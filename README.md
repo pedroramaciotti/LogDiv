@@ -87,18 +87,18 @@ The following example illustrates the entries format of the package.
 |user3|2019-07-05 18:06:00|v7            |v4           |
 |user3|2019-07-05 18:07:22|v5            |v2           |
 
-| item_ID |   topic   | category  |
-| ------- |:---------:|:----------|
-|    v1   |  Football |  beginner |
-|    v2   |  Tennis   |  pro      |
-|    v3   |  Football |  beginner |
-|    v4   |  Tennis   |  advanced |
-|    v5   |  Rugby    |  medium   |
-|    v6   |  Football |  beginner |
-|    v7   |  Tennis   |  pro      |
-|    v8   |  Football |  beginner |
-|    v9   |  Tennis   |  advanced |
-|    v10  |  Rugby    |  medium   |
+|item|class1  |class2  |class3 |
+|----|--------|--------|-------|
+|v1  |Football|beginner|France |
+|v2  |Tennis  |pro     |England|
+|v3  |Football|beginner|World  |
+|v4  |Tennis  |advanced|France |
+|v5  |Rugby   |medium  |Italy  |
+|v6  |Football|beginner|England|
+|v7  |Tennis  |pro     |Spain  |
+|v8  |Football|beginner|France |
+|v9  |Tennis  |advanced|World  |
+|v10 |Rugby   |medium  |World  |
 
 In that example, the topic is a sport and the category is the level of the sport. 
 

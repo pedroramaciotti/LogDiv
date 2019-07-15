@@ -1,0 +1,27 @@
+input_files:
+    weblog_file: '/home/alexandre/Documents/logdiv_git/datasets/example1/log_1.csv'
+    pages_file: '/home/alexandre/Documents/logdiv_git/datasets/example1/items_1.csv'
+weblog_format:
+    user_id_column: user
+    timestamp_column: timestamp
+    referrer_page_column: referrer_item
+    requested_page_column: requested_item
+pages_data_format:
+    page_id_column: item
+    category_column: class2
+    topic_column: class1
+temporal_filtering:
+    temporal_start: '2019-7-3 00:00:00'
+    temporal_end: '2019-7-5 23:59:59'
+session_data:
+    requests_threshold_per_session: 2
+    features: >
+                requests,timespan,star_chain_like,
+                inter_req_sd,inter_req_mean,topic_entropy
+    features_log_transformed: requests, timespan, inter_req_sd,inter_req_mean
+    features_transformed: >
+                requests, timespan,
+                star_chain_like,
+                inter_req_sd,inter_req_mean
+
+        

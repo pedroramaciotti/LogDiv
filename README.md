@@ -13,7 +13,7 @@ Computing the diversity of items requested by users is a task of interest in man
 
 ### Prerequisites
 
-DivPy requires:
+LogDiv requires:
 
 * Python
 * Numpy - Essential
@@ -47,23 +47,29 @@ LogDiv needs a specific format of entries to run:
 - A file describing all requests under a table format, whose fields are:
 * user ID
 * timestamp
-* requested page ID
-* referrer page ID
+* requested item ID
+* referrer item ID
 
 - A file describing all pages visited under a table format, whose fields are:
-* page ID
+* item ID
 * topic 
 * category
 
 ### YAML file
 
-Code that use LogDiv are directed by a YAML file: if you want to modify entry files, or the features you want to compute, 
+Codes that use LogDiv are directed by a YAML file: if you want to modify entry files, or the features you want to compute, 
 you just need to modify the YAML file, not the code itself.
 This file is self-explanatory.
 
-## Example
+## Examples
 
-### Entries example
+You dispose of two examples to familiarize yourself with LogDiv:
+* Example 1 uses a short dataset to show how to use LogDiv
+* Example 2 uses a dataset of more than 500 thousands of requests to show what kind of results can be obtained
+
+These examples (dataset, script and yaml file) can be found in *datasets* directory.
+
+### Example 1
 The following example illustrates the entries format of the package.
 
 ![](example.png)
@@ -100,10 +106,5 @@ The following example illustrates the entries format of the package.
 |v9  |Tennis  |advanced|World  |
 |v10 |Rugby   |medium  |World  |
 
-In that example, the topic is a sport and the category is the level of the sport. 
-
-### Test of LogDiv
-
-To check if the module is successfully installed, and see what kind of results can be obtained, you can run the script in section example, using the entries given in the same directory.
-
+### Example 2
 

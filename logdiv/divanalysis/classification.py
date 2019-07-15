@@ -45,8 +45,8 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
     #heatmap
     image = ax.imshow(matrix,cmap="YlGn")
     ax.figure.colorbar(image, ax=ax)
-    ax.set_xticks(np.arange(matrix.shape[1]))
-    ax.set_yticks(np.arange(matrix.shape[0]))
+    ax.set_xticks(np.arange(matrix.shape[1]+1)-.5, minor=True)
+    ax.set_yticks(np.arange(matrix.shape[0]+1)-.5, minor=True)
         
     if ticks_theme=='inclined':
         ax.set_xticklabels(categories, rotation=45,ha='left')
@@ -86,6 +86,19 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
                     verticalalignment='top', bbox=props)           
         ax.set_xticklabels(ticks)
         ax.set_yticklabels(ticks)
+        
+    elif ticks_theme == 'dict':
+        text_box = []
+        ticks = []
+        for key in sorted(categories.keys()):
+            text_box.append('%s : %s'%(key,categories[key]))
+            ticks.append(key)
+        props = dict(boxstyle='round', facecolor='wheat', alpha=1.0) 
+        if text_place=='fig':
+            ax.text(0.25,1.4,'\n'.join(text_box), transform=ax.transAxes, fontsize=10,
+                    verticalalignment='top', bbox=props)           
+        ax.set_xticklabels(ticks)
+        ax.set_yticklabels(ticks)        
                 
     ax.set_xlabel(xlabel,fontsize=xlabelfs)
     ax.set_ylabel(ylabel)
@@ -96,8 +109,6 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
                    labeltop=True, labelbottom=False)
     for edge, spine in ax.spines.items():
         spine.set_visible(False)
-    ax.set_xticks(np.arange(matrix.shape[1]+1)-.5, minor=True)
-    ax.set_yticks(np.arange(matrix.shape[0]+1)-.5, minor=True)
     ax.grid(which="minor", color="w", linestyle='-', linewidth=7)
     ax.tick_params(which="minor", bottom=False, left=False)
     ax.axvline(len(categories)-1.5, linestyle='-', color='r')
@@ -120,7 +131,7 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
                 kw.update(color=textcolors[image.norm(matrix[i, j]) > threshold])
                 text = image.axes.text(j, i, valfmt(matrix[i, j], None),fontsize=fs, **kw)
                 texts.append(text)
-    #fig.tight_layout()
+    fig.tight_layout()
     if filename is not None:
         plt.savefig("/home/alexandre/Documents/Melty/Experience/%s.pdf"%filename, bbox_inches = 'tight')
         #plt.savefig("/home/alexandre/Documents/alex/Figures/%s.pdf"%filename, bbox_inches = 'tight')

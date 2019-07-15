@@ -67,6 +67,7 @@ This file is self-explanatory.
 The following example illustrates the entries format of the package.
 
 ![](example.png)
+
 |user |timestamp          |requested_item|referrer_item|
 |-----|-------------------|--------------|-------------|
 |user1|2019-07-03 00:00:00|v1            |v4           |

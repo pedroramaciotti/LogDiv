@@ -5,3 +5,9 @@
 logdiv.egg-info/
 build/
 dist/
+
+# ...
+example.pdf
+
+# vim saved files
+.*.swp

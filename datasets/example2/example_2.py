@@ -29,6 +29,12 @@ requests_threshold_per_session = parameters['session_data']['requests_threshold_
 # page information file
 pages=pd.read_csv(parameters['input_files']['pages_file'],low_memory=False)
 
+# Selecting 6 most popular topic and category
+categories = pages[pages_columns_dict['category_column']].value_counts().index[:6]
+topics = pages[pages_columns_dict['topic_column']].value_counts().index[:6]
+
+# Reclassifying categories and topics that won't be used in the analysis
+pages[[pages_columns_dict['topic_column'],pages_columns_dict['category_column']]] = logdiv.weblogtransform.classifier(pages,topics,categories,pages_columns_dict)
 ################################################
 # Reading weblog file, weblog tranform and     #
 # sessionisation or loading pkl weblog file    #
@@ -90,16 +96,34 @@ logdiv.sessionspaces.plot_hist_requests(session_data,requests_threshold_per_sess
 # Cluster Computation          #
 ################################
 
-# retrieving cluster_id with KMeans method
-session_data_threshold['supervised_cluster_id_'] = logdiv.sessionspaces.supervised(session_data_threshold, session_features_t, n_cluster = 3, verbose = True)
+# retrieving cluster_id with hierarchical method
+list_features_t = [['requests_t','timespan_t'],['inter_req_sd_t','inter_req_mean_t']]
+list_n_clusters = [3,2]
+session_data_threshold['hierarchical_cluster_id'] = logdiv.sessionspaces.hierarchical(session_data_threshold, list_features_t,list_n_clusters, verbose = True)
 
+session_data_pca, explained_variance_ratio, components = logdiv.sessionspaces.compute_pca(session_data_threshold, session_features_t, ['hierarchical_cluster_id'], verbose = True)
+logdiv.sessionspaces.plot_explained_variance(explained_variance_ratio, threshold_explained_variance = 0.8, verbose = True)
+# keep first and second Principal Components
+logdiv.sessionspaces.scatterplot(session_data_pca, components[:2], session_features_t,'hierarchical_cluster_id', verbose = True)
+logdiv.sessionspaces.scatterplot_centroids(session_data_pca,'hierarchical_cluster_id', components[:2], session_features_t,verbose=True)
 #####################
 # Group composition #
 #####################
+session_data['>4_requests'] = False
+# >4 requests
+session_data.loc[session_data.requests > 4, '>4_requests'] = True
 
-session_data['>1_request'] = False
+session_data['4_requests'] = False
+# 4 requests
+session_data.loc[session_data.requests == 4, '4_requests'] = True
+
+session_data['3_requests'] = False
+# 3 requests
+session_data.loc[session_data.requests == 3, '3_requests'] = True
+
+session_data['2_requests'] = False
 # 2 requests
-session_data.loc[session_data.requests > 1, '>1_request'] = True
+session_data.loc[session_data.requests == 2, '2_requests'] = True
 
 session_data['1_request'] = False
 # 1 request
@@ -110,19 +134,25 @@ session_data.loc[session_data.requests == 1, '1_request'] = True
 ##########################
 
 # Aggregated diversity
-proportion_data, entropy_matrix = logdiv.divanalysis.proportion_group(weblog, session_data,'requested_topic', pages.sport.unique(),['1_request','>1_request'],verbose = True)
+proportion_data, entropy_matrix = logdiv.divanalysis.proportion_group(weblog, session_data,'requested_topic', pages[pages_columns_dict['topic_column']].unique(),['1_request','2_requests','3_requests','4_requests','>4_requests'],verbose = True)
 logdiv.divanalysis.plot_aggregated(proportion_data, entropy_matrix, requests_threshold_per_session)
 
 # Temporal diversity
 timeseries_data = logdiv.divanalysis.temporal_analysis(weblog,session_data,'requested_topic',parameters['temporal_filtering']['temporal_start'],\
                                                 parameters['temporal_filtering']['temporal_end'],\
-                                                ['1_request'], weblog_columns_dict,verbose = True)
-logdiv.divanalysis.plot_temporal(timeseries_data,['1_request'],verbose = True)
+                                                ['2_requests','3_requests','>4_requests'], weblog_columns_dict,verbose = True)
+logdiv.divanalysis.plot_temporal(timeseries_data,['2_requests','3_requests','>4_requests'],verbose = True)
 
 # Classification diversity
-browsing_matrix, markov_matrix, diversifying_matrix,change_browsing_matrix = logdiv.divanalysis.classification_diversity(weblog, pages.level.unique(), requests_threshold_per_session,verbose = True)
+browsing_matrix, markov_matrix, diversifying_matrix,change_browsing_matrix = logdiv.divanalysis.classification_diversity(weblog, pages[pages_columns_dict['category_column']].unique(), requests_threshold_per_session,verbose = True)
 
-categories = pages.level.unique()
+categories = pages[pages_columns_dict['category_column']].unique()
 # plotting matrix
-logdiv.divanalysis.plot_pattern_matrix(browsing_matrix,list(categories)+['marg.'],ticks_theme='greek',text_place='separate',\
+logdiv.divanalysis.plot_pattern_matrix(browsing_matrix,list(categories)+['marg.'],\
                                 xlabel='Browsing Matrix',verbose = True)
+logdiv.divanalysis.plot_pattern_matrix(markov_matrix,list(categories)+['marg.'],\
+                                xlabel='Markov Matrix',verbose = True)
+logdiv.divanalysis.plot_pattern_matrix(diversifying_matrix,list(categories)+['pt.'],\
+                                xlabel='Diversifying Matrix',verbose = True)
+logdiv.divanalysis.plot_pattern_matrix(change_browsing_matrix,list(categories)+['marg.'],\
+                                xlabel='Change Browsing Matrix',verbose=True)

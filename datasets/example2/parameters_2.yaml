@@ -16,12 +16,11 @@ temporal_filtering:
 session_data:
     requests_threshold_per_session: 4
     features: >
-                requests,timespan,star_chain_like,
-                inter_req_sd,inter_req_mean,topic_entropy
+                requests,timespan,
+                inter_req_sd,inter_req_mean
     features_log_transformed: requests, timespan, inter_req_sd,inter_req_mean
     features_transformed: >
                 requests, timespan,
-                star_chain_like,
                 inter_req_sd,inter_req_mean
 
         

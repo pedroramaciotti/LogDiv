@@ -133,8 +133,8 @@ def scatterplot_centroids(session_data_pca,cluster_type,components,feature_names
                                 shape[0]/session_data_pca.shape[0])for cluster_id in num_cluster]).max()
     ax2.set_xbound(xlim_min,xlim_max)
     ax2.set_ybound((ylim_min,ylim_max))
-    ax2.set_xlim((-1.5,1.75))
-    ax2.set_ylim((-1.5,1.5))
+    #ax2.set_xlim((-1.5,1.75))
+    #ax2.set_ylim((-1.5,1.5))
     ax2.invert_yaxis()
     # Labeling the clusters
     for cluster_id in num_cluster:

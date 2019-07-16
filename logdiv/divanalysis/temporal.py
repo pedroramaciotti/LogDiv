@@ -11,7 +11,7 @@ from . import function
 
 
 def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_weblog_start, temporal_analysis_weblog_end,\
-                      group_names, weblog_column_dict,verbose = False):
+                      group_names, weblog_column_dict,micd = False, verbose = False):
     """
     Calculate temporal (each hour) number of requests, entropy consummed,
     entropy offered and Mean Individual Consummed Diversity along the groups
@@ -34,9 +34,11 @@ def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_w
     t_activity_columns = ['t_activity_'+group_name for group_name in group_names]
     t_consumed_diversity_columns = ['t_consumed_diversity_'+group_name for group_name in group_names]
     t_offered_diversity_columns = ['t_offered_diversity_'+group_name for group_name in group_names]    
-    t_mean_ind_cons_div_columns = ['t_mean_ind_cons_div_'+group_name for group_name in group_names]
-    column_names = ['start_time','end_time','t_activity_total','t_consumed_diversity_total','t_offered_diversity_total','t_mean_ind_cons_div_total']\
+    if micd: t_mean_ind_cons_div_columns = ['t_mean_ind_cons_div_'+group_name for group_name in group_names]
+    if micd: column_names = ['start_time','end_time','t_activity_total','t_consumed_diversity_total','t_offered_diversity_total','t_mean_ind_cons_div_total']\
                     +t_activity_columns+t_consumed_diversity_columns + t_offered_diversity_columns + t_mean_ind_cons_div_columns
+    else: column_names = ['start_time','end_time','t_activity_total','t_consumed_diversity_total','t_offered_diversity_total']\
+                    +t_activity_columns+t_consumed_diversity_columns + t_offered_diversity_columns 
     timeseries_data=pd.DataFrame(columns=column_names)
     for columns in timeseries_data:
         timeseries_data[columns] = np.zeros(len(t_days)*len(t_hours))
@@ -66,7 +68,7 @@ def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_w
                                                                (subset=weblog_column_dict['requested_page_column']),analysis_column)
                 timeseries_data['t_consumed_diversity_total'][counter]=function.ShannonEntropy(pa_consumed)
                 timeseries_data['t_offered_diversity_total'][counter]=function.ShannonEntropy(pa_offered)
-                timeseries_data['t_mean_ind_cons_div_total'][counter]=hour_session.topic_entropy.mean()
+                if micd: timeseries_data['t_mean_ind_cons_div_total'][counter]=hour_session.topic_entropy.mean()
             # Groups 
             for group_name in group_names:
                 list_sessions = session_data[session_data[group_name]].session_id.values
@@ -79,7 +81,7 @@ def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_w
                                                                    (subset=weblog_column_dict['requested_page_column']),analysis_column)
                     timeseries_data['t_consumed_diversity_'+group_name][counter] = function.ShannonEntropy(pa_consumed)
                     timeseries_data['t_offered_diversity_'+group_name][counter]=function.ShannonEntropy(pa_offered)
-                    timeseries_data['t_mean_ind_cons_div_'+group_name][counter]=session_tmp.topic_entropy.mean()
+                    if micd: timeseries_data['t_mean_ind_cons_div_'+group_name][counter]=session_tmp.topic_entropy.mean()
             # Aux
             counter+=1
         del hour_weblog
@@ -281,7 +283,7 @@ def plot_temporal_avant(timeseries_data,verbose=True):
         print("     Temporal analysis plotted in %.1f seconds."%(timelib.time() - start_time))
     return;
 
-def plot_temporal(timeseries_data, group_names, filename = None, verbose = False):
+def plot_temporal(timeseries_data, group_names, micd = False, filename = None, verbose = False):
     """
     Plot temporal analysis with timeseries_data calculated with "temporal_analysis"
     """
@@ -305,7 +307,8 @@ def plot_temporal(timeseries_data, group_names, filename = None, verbose = False
                                                                               pd.Timestamp(n).dayofweek == 6)]
     we_days = list(set(we_days))
     # Figure setting
-    fig,(ax1,ax2,ax3,ax4)=plt.subplots(4,1,figsize=(20,15))
+    if micd: fig,(ax1,ax2,ax3,ax4)=plt.subplots(4,1,figsize=(20,15))
+    else: fig,(ax1,ax2,ax3)=plt.subplots(3,1,figsize=(20,15))
     # Activity
     ax1.plot(range(len(timeseries_data['t_activity_total'])),np.convolve(timeseries_data['t_activity_total'],filter_array,mode='same'))
     for group_name in group_names:
@@ -362,21 +365,22 @@ def plot_temporal(timeseries_data, group_names, filename = None, verbose = False
             ax3.axvspan(24*(we_day-first_date.day), 24*(we_day-first_date.day+1), facecolor='green', edgecolor='none', alpha=.2)
     ax3.set_ylabel('Off. IEUC',fontsize=14)
     # Mean Ind. Cons. Diversity
-    ax4.plot(range(len(timeseries_data['t_mean_ind_cons_div_total'])),\
-             np.convolve(np.power(2,timeseries_data['t_mean_ind_cons_div_total']),filter_array,mode='same'))
-    for group_name in group_names:
-        ax4.plot(range(len(timeseries_data['t_mean_ind_cons_div_'+group_name])),\
-                 np.convolve(np.power(2,timeseries_data['t_mean_ind_cons_div_'+group_name]),filter_array,mode='same'))
-    ax4.set_xticks([12+n*24 for n in range(0,number_of_days)])
-    ax4.set_xticklabels(list_date,fontsize=11)
-    ax4.grid(False)
-    ax4.set_xlim((0,len(timeseries_data['t_activity_total'])))
-    for n in range(0,number_of_days+1):#painting the lines dividing the days
-        ax4.axvline(x=n*24,color='k',linestyle=':')
-    for we_day in we_days: # painting the weekend days
-            ax4.axvspan(24*(we_day-first_date.day), 24*(we_day-first_date.day+1), facecolor='green', edgecolor='none', alpha=.2)
-    ax4.set_xlabel('Time',fontsize=14)
-    ax4.set_ylabel('M.I.C.IEUC',fontsize=14)
+    if micd:
+        ax4.plot(range(len(timeseries_data['t_mean_ind_cons_div_total'])),\
+                 np.convolve(np.power(2,timeseries_data['t_mean_ind_cons_div_total']),filter_array,mode='same'))
+        for group_name in group_names:
+            ax4.plot(range(len(timeseries_data['t_mean_ind_cons_div_'+group_name])),\
+                     np.convolve(np.power(2,timeseries_data['t_mean_ind_cons_div_'+group_name]),filter_array,mode='same'))
+        ax4.set_xticks([12+n*24 for n in range(0,number_of_days)])
+        ax4.set_xticklabels(list_date,fontsize=11)
+        ax4.grid(False)
+        ax4.set_xlim((0,len(timeseries_data['t_activity_total'])))
+        for n in range(0,number_of_days+1):#painting the lines dividing the days
+            ax4.axvline(x=n*24,color='k',linestyle=':')
+        for we_day in we_days: # painting the weekend days
+                ax4.axvspan(24*(we_day-first_date.day), 24*(we_day-first_date.day+1), facecolor='green', edgecolor='none', alpha=.2)
+        ax4.set_xlabel('Time',fontsize=14)
+        ax4.set_ylabel('M.I.C.IEUC',fontsize=14)
     # Saving
     week_graph_length=10
     weeks_in_graph=number_of_days/7

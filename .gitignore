@@ -11,3 +11,9 @@ example.pdf
 
 # vim saved files
 .*.swp
+
+# gephi
+gephi/
+
+# py_cache
+__pycache__/

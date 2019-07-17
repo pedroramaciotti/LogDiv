@@ -356,7 +356,7 @@ def plot_temporal(timeseries_data, group_names, micd = False, filename = None, v
                  np.convolve(np.power(2,timeseries_data['t_offered_diversity_'+group_name]),filter_array,mode='same'))
     ax3.set_xticks([12+n*24 for n in range(0,number_of_days)])
     ax3.set_xticklabels(['','',''],fontsize=11)
-    #ax3.set_xticklabels(list_date,fontsize=11)
+    if not micd: ax3.set_xticklabels(list_date,fontsize=11)
     ax3.grid(False)
     ax3.set_xlim((0,len(timeseries_data['t_activity_total'])))
     for n in range(0,number_of_days+1):#painting the lines dividing the days

@@ -74,7 +74,7 @@ The following example illustrates the entries format of the package.
 
 ![](example.png)
 
-|user |timestamp          |requested_item|referrer_item|
+|user |timestamp          |requested_item| referrer_item|
 |-----|-------------------|--------------|-------------|
 |user1|2019-07-03 00:00:00|v1            |v4           |
 |user1|2019-07-03 00:01:00|v4            |v2           |
@@ -95,16 +95,18 @@ The following example illustrates the entries format of the package.
 
 |item|class1  |class2  |class3 |
 |----|--------|--------|-------|
-|v1  |Football|beginner|France |
-|v2  |Tennis  |pro     |England|
-|v3  |Football|beginner|World  |
-|v4  |Tennis  |advanced|France |
-|v5  |Rugby   |medium  |Italy  |
-|v6  |Football|beginner|England|
-|v7  |Tennis  |pro     |Spain  |
-|v8  |Football|beginner|France |
-|v9  |Tennis  |advanced|World  |
-|v10 |Rugby   |medium  |World  |
+|v1  |x       |\alpha  |h      |
+|v2  |y       |\beta   |h      |
+|v3  |y       |\beta   |f      |
+|v4  |x       |\beta   |h      |
+|v5  |z       |\gammma |f      |
+|v6  |y       |\alpha  |h      |
+|v7  |z       |\alpha  |f      |
+|v8  |x       |\gammma |f      |
+|v9  |y       |\alpha  |f      |
+|v10 |z       |\gammma |h      |
 
 ### Example 2
+
+![](example_2.png)
 

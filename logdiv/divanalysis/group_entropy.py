@@ -2,7 +2,17 @@ import numpy as np
 
 def cluster_entropy(session_data, group):
     """
-    Calucalte entropy and IEUC of group
+    Calculate entropy and IEUC of group
+    
+        Parameters
+    ----------
+        session_data: pandas dataframe of sessions
+        
+        group: group wanted to analyse
+                    
+    Returns
+    -------
+        2 dict
     """
     entropy_vector = {}
     ieuc_vector = {}

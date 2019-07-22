@@ -7,6 +7,21 @@ def cluster_classification(weblog, session_data_threshold, cluster_type, categor
     """
     Call function of matrix_calculator.py to return matrices for each cluster. 
     Select requested_category of weblog that are only in entry "categories"
+    
+    Parameters
+    ----------
+        weblog: pandas dataframe of requests
+                        
+        session_data_threshold: pandas dataframe to select requests
+        
+        cluster_type: string
+        
+        categories: list of items wanted to analyse
+
+        
+    Returns
+    -------
+        2 numpy array
     """
     if verbose== True:
         start_time = timelib.time()
@@ -74,6 +89,27 @@ def ShannonEntropy(P,normalize=False):
 def cluster_classification_tex(f,browsing_matrix,diversifying_matrix, weblog,session_data_threshold,cluster_type,categories):
     """
     Write on latex file variables that are calculated with cluster classification
+    
+    Parameters
+    ----------
+        f: file 
+        
+        browsing_matrix: browsing numpy array wanted to write
+        
+        diversifying_matrix: diversifying numpy array wanted to write
+        
+        weblog: pandas dataframe of requests
+        
+        session_data_threshold: pandas dataframe to select requests
+
+        cluster_type: strings
+        
+        categories: list of items wanted to analyse corresponding to the ones given in 
+                    classification_diversity
+                    
+    Returns
+    -------
+        File (Optionnal)
     """
     divpat_categories = list(set(categories)-{'social','search','other'})
     divpat_N_categories=len(divpat_categories)

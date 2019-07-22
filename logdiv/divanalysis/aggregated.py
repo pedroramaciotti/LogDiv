@@ -5,66 +5,26 @@ import matplotlib.pyplot as plt
 from . import function
 pd.options.mode.chained_assignment = None
 
-def proportion(weblog, session_data, feature,analysis_column, topics, list_numbers, verbose = False):
-    """
-    Calculate and return proportion_data: number of requests and entropy for each group
-    """
-    if verbose == True:
-        start_time = timelib.time()
-        print("\n   * Computing aggregated diversity ...")
-        
-    
-    proportions_matrix=[]
-    entropy_matrix = []
-    
-    # Total
-    weblog=weblog.copy(deep=True)
-    weblog.loc[weblog[analysis_column]=='None',analysis_column]='Other'
-    pa,pa_names = function.proportional_abundance(weblog,analysis_column)
-    pa = function.rearrange_pa_relative_labels(pa,topics,pa_names)
-    proportions_matrix.append(pa)
-    entropy_matrix.append(function.ShannonEntropy(pa, normalize = True))
-    # Number in list_numbers
-    counter = 0
-    for i in list_numbers:
-        list_sessions=session_data[session_data[feature]==list_numbers[counter]].session_id.values
-        weblog_tmp=weblog[weblog.session_id.isin(list_sessions)]
-        weblog_tmp.loc[weblog_tmp[analysis_column]=='None',analysis_column]='Other'
-        pa,pa_names = function.proportional_abundance(weblog_tmp,analysis_column)
-        pa = function.rearrange_pa_relative_labels(pa,topics,pa_names)
-        proportions_matrix.append(pa)
-        entropy_matrix.append(function.ShannonEntropy(pa, normalize = True))
-        counter += 1
-        
-    # > number in list_numbers
-    list_sessions=session_data[session_data[feature]>list_numbers[-1]].session_id.values
-    weblog_tmp=weblog[weblog.session_id.isin(list_sessions)]
-    weblog_tmp.loc[weblog_tmp[analysis_column]=='None',analysis_column]='Other'
-    pa,pa_names = function.proportional_abundance(weblog_tmp,analysis_column)
-    
-    pa = function.rearrange_pa_relative_labels(pa,topics,pa_names)
-    proportions_matrix.append(pa)
-    entropy_matrix.append(function.ShannonEntropy(pa, normalize = True))
-    
-    del weblog_tmp
-
-    
-    index_names = ['Total']
-    index_names += ["%d %s"%(list_numbers[i], feature) for i in range(len(list_numbers))]
-    index_names.append(">%d %s"%(list_numbers[-1], feature))
-    #index_names.append("Total")
-    
-    proportion_data = pd.DataFrame(data=proportions_matrix,columns=topics,index=index_names)
-    proportion_data = proportion_data.drop(columns='None')
-    
-    if verbose == True:
-        print("     Aggregated diversity computed in %.1f seconds."%(timelib.time()-start_time))
-    
-    return proportion_data, entropy_matrix;
-
 def proportion_group(weblog, session_data,analysis_column, topics, group_names, verbose = False):
     """
     Calculate and return proportion_data: number of requests and entropy for each group
+    
+    Parameters
+    ----------
+        weblog: pandas dataframe of requests
+        
+        session_data: pandas dataframe of sessions
+        
+        analysis_column: pandas dataframe column for proportion analysis
+        
+        topics: list of items in analysis_column wanted to analyse
+        
+        group_names: list of sessions group wanted to analyse
+        
+    Returns
+    -------
+        Pandas Dataframe
+        Numpy array
     """
     if verbose == True:
         start_time = timelib.time()
@@ -102,9 +62,21 @@ def proportion_group(weblog, session_data,analysis_column, topics, group_names, 
     
     return proportion_data, entropy_matrix;
 
-def plot_aggregated(proportion_data, entropy_matrix, threshold, filename = None):
+def plot_aggregated(proportion_data, entropy_matrix, threshold=2, filename = None):
     """
     Plot proportion data calculated with proportion_group or proportion
+    
+    Parameters
+    ----------
+        proportion_data: pandas dataframe from proportion_group analysis
+        
+        entropy_matrix: numpy array from proportion_group analysis
+        
+        threshold: int for lim of figure
+
+    Returns
+    -------
+        None
     """
     ax=proportion_data.plot.barh(stacked=True,edgecolor='none')
     ax.legend(loc=7)
@@ -126,6 +98,16 @@ def plot_aggregated(proportion_data, entropy_matrix, threshold, filename = None)
 def aggregated_tex(f, entropy_matrix):
     """
     Write in latex file entropy of 6 groups (need to be change to adapt number of groups)
+        
+    Parameters
+    ----------
+        f: file
+        
+        entropy_matrix: numpy array from proportion_group analysis
+
+    Returns
+    -------
+        File (Optionnal)
     """
     f.write("\n% 4. Aggregated Diversity")
     f.write("\n\\newcommand{\\%s}{%.2f}"%('EntropyGroupA',entropy_matrix[0]))

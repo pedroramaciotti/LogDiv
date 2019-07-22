@@ -3,6 +3,18 @@
 def session_hist_tex(f, session_data,threshold_requests_per_session):
     """
     Write session caracteristics in latex file
+    
+    Parameters
+    ----------
+        f: file
+        
+        session_data: pandas dataframe of sessions
+                                
+        threshold_requests_per_session: int for filter number of requests per session
+        
+    Returns
+    -------
+        File (Optionnal)
     """
     digit_dic={'0':'Zero','1':'One','2':'Two','3':'Three','4':'Four','5':'Five','6':'Six','7':'Seven','8':'Eight','9':'Nine'}
     f.write("\n% 2. Histogram sessions with given requests")

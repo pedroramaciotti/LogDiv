@@ -4,9 +4,21 @@ import numpy as np
 import matplotlib
 import time as timelib
 
-def classification_diversity(weblog, categories, threshold_requests_per_session, verbose = False):
+def classification_diversity(weblog, categories, threshold_requests_per_session = 0, verbose = False):
     """
     Calculate matrices using matrix_calculator.py. Select requested_category and referrer_category of weblog that are in entry "categories"
+    
+    Parameters
+    ----------
+        weblog: pandas dataframe of requests
+                        
+        categories: list of items wanted to analyse
+        
+        threshold_requests_per_session: int for filter number of requests per session
+        
+    Returns
+    -------
+        4 numpy array
     """
     if verbose== True:
         start_time = timelib.time()
@@ -36,6 +48,37 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
                         text_place = 'fig', fs=12,xlabelfs=18,filename = None,verbose = False):
     """
     Plot matrix with heatmap method 
+    
+    Parameters
+    ----------
+        matrix: numpy array wanted to plot
+                        
+        categories: list of items wanted to analyse corresponding to the ones given in 
+                    classification_diversity
+        
+        ticks_theme: string for theme used to plot:
+            'inclined': plot ticks in their entirety, inclined
+            'abreviation': plot ticks abreviated, inclined
+            'greek': ticks are greek letters
+            'dict': dictionnary given in entry, key are used for ticks
+            
+        title: string
+        
+        xlabel: string
+            
+        ylabel: string
+        
+        text_place: if ticks theme different to inclined, legend is in text box,
+        place of the box: 'fig' or 'separate'
+        
+        fs: int, size of text
+        
+        xlabelfs; int, size of label
+            
+        
+    Returns
+    -------
+        None
     """
     if verbose== True:
         start_time = timelib.time()
@@ -47,10 +90,9 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
     ax.figure.colorbar(image, ax=ax)
     ax.set_xticks(np.arange(matrix.shape[1]+1)-.5, minor=True)
     ax.set_yticks(np.arange(matrix.shape[0]+1)-.5, minor=True)
-        
     if ticks_theme=='inclined':
         ax.set_xticklabels(categories, rotation=45,ha='left')
-        ax.set_yticklabels(categories, rotation=45)
+        ax.set_yticklabels(categories, rotation=45)    
         
     elif ticks_theme=='abreviation':
         ticks = [cat[:2] for cat in categories]
@@ -70,7 +112,7 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
                     verticalalignment='top', bbox=props)                   
         ax.set_xticklabels(ticks, rotation=45,ha='left')
         ax.set_yticklabels(ticks, rotation=45)
-        
+    
     elif ticks_theme=='greek':
         greek_letters = ['\u03b1','\u03b2','\u03b3','\u03b4','\u03b5',\
                          '\u03b6','\u03b7','\u03b8','\u03b9','\u03ba',\
@@ -98,7 +140,10 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
             ax.text(0.25,1.4,'\n'.join(text_box), transform=ax.transAxes, fontsize=10,
                     verticalalignment='top', bbox=props)           
         ax.set_xticklabels(ticks)
-        ax.set_yticklabels(ticks)        
+        ax.set_yticklabels(ticks)  
+    else:
+        print("Error: ticks_theme need to be: 'inclined', 'abreviation', 'greek' or 'dict'")
+        return;
                 
     ax.set_xlabel(xlabel,fontsize=xlabelfs)
     ax.set_ylabel(ylabel)
@@ -154,6 +199,23 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
 def classification_tex(f, weblog, threshold_requests_per_session,categories,weblog_columns_dict):
     """
     Write on latex file information variables on classification
+    
+    Parameters
+    ----------
+        f: file 
+        
+        weblog: pandas dataframe of requests
+        
+        threshold_requests_per_session: int for filter number of requests per session
+                        
+        categories: list of items wanted to analyse corresponding to the ones given in 
+                    classification_diversity
+        
+        weblog_columns_dict: dict recupered with function of 'file_function'
+            
+    Returns
+    -------
+        File (Optionnal)
     """
     categories = list(set(categories)-{'social','search','other'})
 
@@ -181,6 +243,21 @@ def classification_tex(f, weblog, threshold_requests_per_session,categories,webl
 def matrix_tex(f, browsing_matrix, diversifying_matrix, categories):
     """
     Write on latex file the most 
+    
+    Parameters
+    ----------
+        f: file 
+        
+        browsing_matrix: browsing numpy array wanted to write
+        
+        diversifying_matrix: diversifying numpy array wanted to write
+                        
+        categories: list of items wanted to analyse corresponding to the ones given in 
+                    classification_diversity
+                    
+    Returns
+    -------
+        File (Optionnal)
     """
     digit_dic={'0':'Zero','1':'One','2':'Two','3':'Three','4':'Four','5':'Five','6':'Six','7':'Seven','8':'Eight','9':'Nine'}
     divpat_categories = list(set(categories)-{'social','search','other'})

@@ -16,6 +16,26 @@ def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_w
     Calculate temporal (each hour) number of requests, entropy consummed,
     entropy offered and Mean Individual Consummed Diversity along the groups
     specified in "group_names"
+    
+    Parameters
+    ----------
+    weblog: pandas dataframe of requests
+         
+    session_data: pandas dataframe of requests
+
+    analysis_column: pandas dataframe column wanted to analyse
+    
+    temporal_analysis_weblog_start: start timestamp
+   
+    temporal_analysis_weblog_end: end timestamp
+
+    group_names: list of string
+    
+    weblog_column_dict: dict
+       
+    Returns
+    -------
+        Pandas dataframe
     """
     if verbose== True:
         start_time_tot = timelib.time()
@@ -96,6 +116,20 @@ def temporal_analysis_article(weblog, temporal_analysis_weblog_start, temporal_a
     """
     Calculate temporal (each 6 hours) number of requests article -> article and 
     number of requests article -> article that have changed topic
+    
+    Parameters
+    ----------
+    weblog: pandas dataframe of requests
+             
+    temporal_analysis_weblog_start: start timestamp
+   
+    temporal_analysis_weblog_end: end timestamp
+    
+    weblog_column_dict: dict
+       
+    Returns
+    -------
+        Pandas dataframe
     """
     if verbose== True:
         start_time_tot = timelib.time()
@@ -158,6 +192,20 @@ def temporal_analysis_article_day(weblog, temporal_analysis_weblog_start, tempor
     """
     Calculate temporal (each day) number of requests article -> article and 
     number of requests article -> article that have changed topic
+    
+    Parameters
+    ----------
+    weblog: pandas dataframe of requests
+    
+    temporal_analysis_weblog_start: start timestamp
+   
+    temporal_analysis_weblog_end: end timestamp
+    
+    weblog_column_dict: dict
+       
+    Returns
+    -------
+        Pandas dataframe
     """
     if verbose== True:
         start_time_tot = timelib.time()
@@ -213,79 +261,21 @@ def temporal_analysis_article_day(weblog, temporal_analysis_weblog_start, tempor
         print("     Temporal analysis on number of article computed in %.1f seconds."%(timelib.time() - start_time_tot))
     return timeseries_data;
 
-def plot_temporal_avant(timeseries_data,verbose=True):
-    """
-    Same as plot_temporal but old version
-    """
-    if verbose== True:
-        start_time = timelib.time()
-        print("\n   * Plotting temporal analysis ...")
-        
-    filter_size=1
-    filter_array=(1/filter_size)*np.ones(filter_size)
-    first_day=18
-    last_day=24    
-    number_of_days=int(last_day-first_day+1)
-    we_days=[9,10,16,17,23,24]
-    # Figure setting
-    fig,(ax1,ax2)=plt.subplots(2,1,figsize=(15,5))
-    # Activity
-    ax1.plot(range(len(timeseries_data['t_activity_total'])),np.convolve(timeseries_data['t_activity_total'],filter_array,mode='same'))
-    ax1.plot(range(len(timeseries_data['t_activity_F'])),np.convolve(timeseries_data['t_activity_F'],filter_array,mode='same'))
-    ax1.plot(range(len(timeseries_data['t_activity_search'])),np.convolve(timeseries_data['t_activity_search'],filter_array,mode='same'))
-    ax1.plot(range(len(timeseries_data['t_activity_social'])),np.convolve(timeseries_data['t_activity_social'],filter_array,mode='same'))
-    ax1.set_xticks([12+n*24 for n in range(0,number_of_days)])
-    ax1.set_xticklabels(['9/%d/2017 '%(n) for n in range(first_day,first_day+number_of_days+1)],fontsize=11)
-    ax1.grid(False)
-    ax1.set_xlim((0,len(timeseries_data['t_activity_social'])*1.25))
-    for n in range(0,number_of_days+1):#painting the lines dividing the days
-        ax1.axvline(x=n*24,color='k',linestyle=':')
-    for we_day in we_days: # painting the weekend days
-        ax1.axvspan(24*(we_day-first_day), 24*(we_day-first_day+1), facecolor='green', edgecolor='none', alpha=.2)
-    ax1.set_title('Hourly Activity',fontsize=14)
-#    ax1.set_xlabel('Time')
-    ax1.set_ylabel('Requests',fontsize=14)
-    ax1.set_yscale('log')
-#    ax1.legend(['Total','Sessions w. 1 Req.','Sessions w. 2 Req.','Sessions w. 3 Req.','Sessions w. 4 Req.','Sessions wmt 4 req.','Sessions w. Search Or.','Sessions w. Social Or.'])
-    ax1.legend(['Total','Sessions \nwith more than \n4 requests','Sessions\noriginated\nin search\npages','Sessions\noriginated\nin social\nplatforms'])
-   
-    # Diversity
-    ax2.plot(range(len(timeseries_data['t_diversity_total'])),np.convolve(np.power(2,timeseries_data['t_diversity_total']),filter_array,mode='same'))
-#    ax2.plot(range(len(t_diversity_B)),np.convolve(np.power(t_diversity_B,2.0),filter_array,mode='same'))
-#    ax2.plot(range(len(t_diversity_C)),np.convolve(np.power(t_diversity_C,2.0),filter_array,mode='same'))
-#    ax2.plot(range(len(t_diversity_D)),np.convolve(np.power(t_diversity_D,2.0),filter_array,mode='same'))
-#    ax2.plot(range(len(t_diversity_E)),np.convolve(np.power(t_diversity_E,2.0),filter_array,mode='same'))
-    ax2.plot(range(len(timeseries_data['t_diversity_F'])),np.convolve(np.power(2,timeseries_data['t_diversity_F']),filter_array,mode='same'))
-    ax2.plot(range(len(timeseries_data['t_diversity_search'])),np.convolve(np.power(2,timeseries_data['t_diversity_search']),filter_array,mode='same'))
-    ax2.plot(range(len(timeseries_data['t_diversity_social'])),np.convolve(np.power(2,timeseries_data['t_diversity_social']),filter_array,mode='same'))
-    ax2.set_xticks([12+n*24 for n in range(0,number_of_days)])
-    ax2.set_xticklabels(['9/%d/2017 '%(n) for n in range(first_day,first_day+number_of_days+1)],fontsize=11)
-    ax2.grid(False)
-    ax2.set_xlim((0,len(timeseries_data['t_activity_social'])*1.25))
-    for n in range(0,number_of_days+1):#painting the lines dividing the days
-        ax2.axvline(x=n*24,color='k',linestyle=':')
-    for we_day in we_days: # painting the weekend days
-        ax2.axvspan(24*(we_day-first_day), 24*(we_day-first_day+1), facecolor='green', edgecolor='none', alpha=.2)
-#    ax2.set_title('Diversity')
-    ax2.set_xlabel('Time',fontsize=14)
-    ax2.set_ylabel('IEUC',fontsize=14)
-    # Saving
-    week_graph_length=10
-    weeks_in_graph=number_of_days/7
-    fig.set_size_inches(week_graph_length*weeks_in_graph, 5)
-    plt.tight_layout()
-    plt.savefig('../Figures/temporal_apres.pdf', format='pdf')
-    plt.show()
-    plt.clf()
-    plt.close()
-    
-    if verbose == True:
-        print("     Temporal analysis plotted in %.1f seconds."%(timelib.time() - start_time))
-    return;
-
 def plot_temporal(timeseries_data, group_names, micd = False, filename = None, verbose = False):
     """
     Plot temporal analysis with timeseries_data calculated with "temporal_analysis"
+    
+    Parameters
+    ----------
+        timeseries_data: pandas dataframe given by temporal functions
+
+        group_names: list of string
+        
+        micd: bool, if Mean Individual Consummed Diversity is wanted
+       
+    Returns
+    -------
+        None
     """
     if verbose== True:
         start_time = timelib.time()
@@ -327,7 +317,7 @@ def plot_temporal(timeseries_data, group_names, micd = False, filename = None, v
     ax1.set_ylabel('Requests',fontsize=14)
     #ax_names= ['Total','Sessions \nwith more than \n4 requests','Sessions\noriginated\nin search\npages','Sessions\noriginated\nin social\nplatforms']
     ax_names = ['Total'] + group_names 
-    ax1.legend(ax_names,loc=4,bbox_to_anchor=(1.53,-2.5)) # option to deplace the legend
+    ax1.legend(ax_names,bbox_to_anchor=(2.5,0)) # option to deplace the legend
     # Consumed diversity
     #ax2.plot(range(len(timeseries_data['t_consumed_diversity_total'])),\
      #        np.convolve(np.power(2,timeseries_data['t_consumed_diversity_total']),filter_array,mode='same'))
@@ -393,66 +383,19 @@ def plot_temporal(timeseries_data, group_names, micd = False, filename = None, v
     plt.clf()
     plt.close()
     return;
-    
+
 def plot_temporal_article(timeseries_data, filename = None, verbose = False):
-    if verbose== True:
-        start_time = timelib.time()
-        print("\n   * Plotting temporal analysis on number of article ...")
-        
-    filter_size=1
-    filter_array=(1/filter_size)*np.ones(filter_size)
-    first_date=pd.Timestamp(timeseries_data['start_time'].min())
-    last_date=pd.Timestamp(timeseries_data['end_time'].max())
-    if first_date.day > last_date.day:
-        list_date = ['%d/%d/%d'%(first_date.year,first_date.month,n) for n in range(first_date.day,first_date.days_in_month+1)]+\
-                    ['%d/%d/%d'%(last_date.year,last_date.month,n) for n in range(1,last_date.day+1)]
-        number_of_days=len(list_date)
-    else :
-        list_date = ['%d/%d/%d'%(first_date.year,first_date.month,n) for n in range(first_date.day,last_date.day+1)]
-        number_of_days=len(list_date)
-    
-    we_days = [pd.Timestamp(n).day for n in timeseries_data['start_time'] if (pd.Timestamp(n).dayofweek == 5 or \
-                                                                              pd.Timestamp(n).dayofweek == 6)]
-    we_days = list(set(we_days))
-    # Figure setting
-    fig,ax1=plt.subplots(1,1)
-    # Activity
-    ax1.plot(range(len(timeseries_data['t_activity_article'])),np.convolve(timeseries_data['t_activity_article'],filter_array,mode='same'))
-    ax1.plot(range(len(timeseries_data['t_activity_article_change_topic'])),\
-             np.convolve(timeseries_data['t_activity_article_change_topic'],filter_array,mode='same'))
-
-    ax1.set_xticks([12+n*24 for n in range(0,number_of_days)])
-    ax1.set_xticklabels(list_date,fontsize=11)
-    ax1.grid(False)
-    ax1.set_yscale('log')
-    ax1.set_xlim((0,len(timeseries_data['t_activity_article'])))
-    for n in range(0,number_of_days+1):#painting the lines dividing the days
-        ax1.axvline(x=n*24,color='k',linestyle=':')
-    for we_day in we_days: # painting the weekend days
-        ax1.axvspan(24*(we_day-first_date.day), 24*(we_day-first_date.day+1), facecolor='green', edgecolor='none', alpha=.2)
-    ax1.set_title('Hourly Activity',fontsize=14)
-    ax1.set_ylabel('Requests',fontsize=14)
-    ax_names = ['Requests article -> article', 'Requests article -> article \n that have changed topic'] 
-    #ax_names= ['Total','Sessions \nwith more than \n4 requests','Sessions\noriginated\nin search\npages','Sessions\noriginated\nin social\nplatforms']
-    ax1.legend(ax_names,loc=4,bbox_to_anchor=(1.8,0.5)) # option to deplace the legend
-
-    # Saving
-    week_graph_length=10
-    weeks_in_graph=number_of_days/7
-    fig.set_size_inches(week_graph_length*weeks_in_graph, 5)
-    if filename is not None:
-        plt.savefig('/home/alexandre/Documents/Melty/Experience/%s.pdf'%filename, bbox_inches = 'tight') # bbox in order to save the legend
-    plt.show()
-    if verbose == True:
-        print("     Temporal analysis plotted in %.1f seconds."%(timelib.time() - start_time))
-    plt.clf()
-    plt.close()
-    return;
-    
-def plot_temporal_article_2(timeseries_data, filename = None, verbose = False):
     """
     Plot temporal analysis with timeseries_data calculated temporal_analysis_article, 
     plot #(requests art-art that have changed topic)/#(requests art-art) 
+    
+    Parameters
+    ----------
+        timeseries_data: pandas dataframe given by temporal functions
+       
+    Returns
+    -------
+        None
     """
     if verbose== True:
         start_time = timelib.time()

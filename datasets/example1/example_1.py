@@ -1,5 +1,5 @@
 import pandas as pd
-import logdiv
+import logdivv as logdiv
 
 
 # retrieve YAML file

@@ -39,7 +39,23 @@ def origin(df,category,weblog_columns_dict):
 def compute_session_features(weblog,pages,session_data,session_features,weblog_columns_dict,main_page_ids=[],verbose = False):
     """
     Calculate entry "session_features" for each sessions and return session_data with added features columns 
-    """
+    
+    Parameters
+    ----------
+        weblog: pandas dataframe of requests
+        
+        pages: pandas datafrale of pages
+                        
+        session_data: pandas datafrale of pages
+        
+        session_features: list of string, features wanted to compute
+                
+        weblog_columns_dict: dict recupered with function of 'file_function'
+
+    Returns
+    -------
+        Pandas dataframe
+    """    
     if verbose == True:
         start_time = timelib.time()
         print("\n   * Computing session features ...")

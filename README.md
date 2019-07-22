@@ -65,7 +65,7 @@ This file is self-explanatory.
 
 You dispose of two examples to familiarize yourself with LogDiv:
 * Example 1 uses a short dataset to show how to use LogDiv
-* Example 2 uses a dataset of more than 500 thousands of requests to show what kind of results can be obtained
+* Example 2 uses a dataset of more than 100 thousands of requests to show what kind of results can be obtained
 
 These examples (dataset, script and yaml file) can be found in *datasets* directory.
 
@@ -109,4 +109,18 @@ The following example illustrates the entries format of the package.
 ### Example 2
 
 ![](example_2.png)
+
+This figure is the Gephi graph of dataset 2, where each color correspond to a different media.
+
+The file describing requests has the same structure than the one in example 1.
+The file describing pages is more concrete than the one in example 1:
+|item   |media   |continent    |
+|-------|--------|-------------|
+|item0  |Politics|Europe       |
+|item1  |Health  |Asia         |
+|item2  |Politics|North America|
+
+
+
+
 

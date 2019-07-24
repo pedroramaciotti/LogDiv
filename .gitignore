@@ -17,3 +17,6 @@ gephi/
 
 # py_cache
 __pycache__/
+
+#melty function
+plot_pages.py

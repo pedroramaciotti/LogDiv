@@ -19,19 +19,19 @@ def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_w
     
     Parameters
     ----------
-    weblog: pandas dataframe of requests
+        weblog: pandas dataframe of requests
          
-    session_data: pandas dataframe of requests
+        session_data: pandas dataframe of requests
 
-    analysis_column: pandas dataframe column wanted to analyse
+        analysis_column: pandas dataframe column wanted to analyse
     
-    temporal_analysis_weblog_start: start timestamp
+        temporal_analysis_weblog_start: start timestamp
    
-    temporal_analysis_weblog_end: end timestamp
+        temporal_analysis_weblog_end: end timestamp
 
-    group_names: list of string
+        group_names: list of string
     
-    weblog_column_dict: dict
+        weblog_columns_dict: dict
        
     Returns
     -------

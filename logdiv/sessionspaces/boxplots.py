@@ -4,6 +4,18 @@ import time as timelib
 def boxplot(session_data, cluster_type, features, filename = None,verbose = False):
     """
     Plot boxplots of the sessions features given in entry
+    
+    Parameters
+    ----------         
+        session_data: pandas dataframe of requests
+
+        cluster_type: string
+        
+        features: list of string, which feature wanted to be plotted
+       
+    Returns
+    -------
+        None
     """
     if verbose== True:
         start_time = timelib.time()

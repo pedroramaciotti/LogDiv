@@ -3,6 +3,20 @@ import pandas as pd
 def assign_page_classification(weblog,pages,weblog_columns_dict,pages_columns_dict):
     """
     Associate each category and topic of requested and referrer pages of weblog using pages.csv file
+        
+    Parameters
+    ----------
+        weblog: pandas dataframe of requests
+
+        pages: pandas dataframe of pages
+
+        weblog_columns_dict: dict
+
+        pages_columns_dict: dict
+
+    Returns
+    -------
+        Pandas Dataframe
     """
     weblog['requested_category']=weblog[weblog_columns_dict['requested_page_column']].map(pd.Series(index=pages[pages_columns_dict['page_id_column']].\
                                                                        values, data=pages[pages_columns_dict['category_column']].values))

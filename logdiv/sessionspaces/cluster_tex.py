@@ -17,30 +17,27 @@ def ShannonEntropy(P,normalize=False):
     P=P[P>1e-20]
     return -np.sum(P*np.log2(P));
 
-def cluster_tex(f, session_data_threshold,weblog,cluster_type):
-    num_alph_dict = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',7:'H',8:'I',9:'J'}
-    f.write("\n% 3. Clusterization")
-    f.write("\n% Cluster type : ")
-    f.write(cluster_type)
-    f.write("\n\\newcommand{\\%s}{%d}"%('TotalNumberClusters',len(session_data_threshold[cluster_type].unique())))
-    for cluster_id in session_data_threshold[cluster_type].unique():
-                
-        f.write("\n\\newcommand{\\%s%s}{%d}"%('SessionsCluster',num_alph_dict[cluster_id],session_data_threshold[session_data_threshold[cluster_type]==cluster_id].shape[0]))
-    for cluster_id in session_data_threshold[cluster_type].unique():
-        f.write("\n\\newcommand{\\%s%s}{%.1f}"%('PCSessionsCluster',num_alph_dict[cluster_id],100.0*session_data_threshold[session_data_threshold[cluster_type]==cluster_id].shape[0]/session_data_threshold.shape[0]))
-    for cluster_id in session_data_threshold[cluster_type].unique():
-        cluster_session_list=session_data_threshold[session_data_threshold[cluster_type]==cluster_id].session_id.values
-        temp_cluster_weblog=weblog[weblog.session_id.isin(cluster_session_list)]
-        pa,pa_names = proportional_abundance(temp_cluster_weblog,'requested_topic')
-        cluster_entropy=ShannonEntropy(pa,normalize=True)
-        f.write("\n\\newcommand{\\%s%s}{%.1f}"%('EntropyCluster',num_alph_dict[cluster_id],cluster_entropy))
-        f.write("\n\\newcommand{\\%s%s}{%.1f}"%('IEUCCluster',num_alph_dict[cluster_id],np.power(cluster_entropy,2.0)))
-        del temp_cluster_weblog
-    return f;
-
-def cluster_tex_2(f, session_data_threshold,weblog,cluster_type,entropy_group,ieuc_group):
+def cluster_tex(f, session_data_threshold,weblog,cluster_type,entropy_group,ieuc_group):
     """
     Write in latex the number of sessions, entropy, ieuc, entropy indvidual, ieuc individual of each cluster
+    
+    Parameters
+    ----------   
+        f: file
+        
+        session_data_threshold: pandas dataframe of sessions
+    
+        weblog: pandas dataframe of requests
+        
+        cluster_type: string, cluster type wanted
+
+        entropy_group: numpy array, recupered with function "group_entropy"
+        
+        ieuc_group: numpy array, recupered with function "group_entropy"
+
+    Returns
+    -------
+        File
     """
     f.write("\n% 3. Clusterization")
     f.write("\n\\newcommand{\\%s}{%d}"%('TotalNumberClusters',len(session_data_threshold[cluster_type].unique())))

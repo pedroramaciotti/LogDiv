@@ -2,7 +2,19 @@ import pandas as pd
 
 def weblog_sessionizer(weblog,weblog_columns_dict,cutoff_minutes=30):
     """
-    Sessionize weblog in sessions: as long as a group of requests have the same user_id and no inactivity in 30 minutes this is a session"
+    Sessionize weblog in sessions: as long as a group of requests have the same user_id and no inactivity in 30 minutes this is a session
+    
+    Parameters
+    ----------
+    weblog: pandas dataframe of requests
+    
+    weblog_columns_dict: dict
+    
+    cutoff_minutes: int, minutes of inactivity for session
+       
+    Returns
+    -------
+        Pandas Series
     """
     weblog = weblog.copy(deep=True)
     # sort by timestamp

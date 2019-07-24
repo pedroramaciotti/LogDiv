@@ -5,6 +5,21 @@ import numpy as np
 import pandas as pd
 
 def compute_pca(session_data, session_features, cluster_types, verbose = False):
+    """
+    Compute principal components analysis
+    
+    Parameters
+    ----------         
+        session_data: pandas dataframe of sessions
+
+        session_features: list of string, pca with those features
+    
+        cluster_types: list of string, cluster types wanted
+       
+    Returns
+    -------
+        3 Numpy array
+    """
     if verbose == True:
         start_time = timelib.time()
         print("\n   * Principal component analysis ...")
@@ -22,6 +37,16 @@ def compute_pca(session_data, session_features, cluster_types, verbose = False):
 def plot_explained_variance(explained_variance_ratio, threshold_explained_variance = 0.8, verbose = False, filename = None):
     """
     Plot explained variance of each princpal components
+    
+    Parameters
+    ----------         
+        explained_variance_ratio: numpy array, recupered with funcrtion "compute_pca"
+
+        threshold_explained_variance: float between 0 and 1, to trace vertical line on the figure 
+           
+    Returns
+    -------
+        None
     """
     if verbose == True:
         start_time = timelib.time()
@@ -52,6 +77,20 @@ def scatterplot(session_data_pca, components, feature_names, cluster_type, verbo
     """
     Plot scatterplot of sessions along PC1 and PC2 axis, and the composition of these two components, 
     with sessions colored in function of their cluster
+    
+    Parameters
+    ----------         
+        session_data_pca: numpy array, recupered with function "compute_pca"
+        
+        components: numpy array, recupered with function "compute_pca"
+
+        feature_names: list of string, pca with those features
+    
+        cluster_type: cluster type wanted
+       
+    Returns
+    -------
+        None
     """
     if verbose == True:
         start_time = timelib.time()
@@ -93,6 +132,20 @@ def scatterplot(session_data_pca, components, feature_names, cluster_type, verbo
 def scatterplot_centroids(session_data_pca,cluster_type,components,feature_names,filename = None,verbose = False):
     """
     Plot scatterplot of the centroids of each clustera long PC1 and PC2 axis, and the composition of these two components
+    
+    Parameters
+    ----------         
+        session_data_pca: numpy array, recupered with function "compute_pca"
+    
+        cluster_type: cluster type wanted
+        
+        components: numpy array, recupered with function "compute_pca"
+
+        feature_names: list of string, pca with those features
+           
+    Returns
+    -------
+        None
     """
     if verbose == True:
         start_time = timelib.time()

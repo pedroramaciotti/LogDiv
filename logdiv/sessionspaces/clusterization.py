@@ -6,6 +6,19 @@ import time as timelib
 def supervised(session_data_clustering, features, n_cluster = 3, verbose = False):
     """
     Compute supervised clustering using K-means
+
+    Parameters
+    ----------         
+        session_data_clustering: pandas dataframe of sessions for clusterisation
+
+        features: list of string, clusterisation with those features
+    
+        n_cluster: int, number of clusters wanted 
+       
+    Returns
+    -------
+        Pandas Series    
+
     """
     if verbose == True:
         start_time = timelib.time()
@@ -23,6 +36,18 @@ def supervised(session_data_clustering, features, n_cluster = 3, verbose = False
 def hierarchical(session_data_clustering, list_features, list_n_clusters, verbose = False):
     """
     Compute hierarchical clustering using K-means 
+    
+    Parameters
+    ----------         
+        session_data_clustering: pandas dataframe of sessions for clusterisation
+
+        list_features: list of list of string, clusterisation with those features
+    
+        list_n_clusters: list of int, number of clusters wanted 
+       
+    Returns
+    -------
+        Pandas Series   
     """
     if verbose == True:
         start_time = timelib.time()
@@ -54,6 +79,16 @@ def hierarchical(session_data_clustering, list_features, list_n_clusters, verbos
 def unsupervised(session_data_clustering, features, verbose = False):
     """
     Compute unsupervised clustering using dbscan
+    
+    Parameters
+    ----------         
+        session_data_clustering: pandas dataframe of sessions for clusterisation
+
+        features: list of string, clusterisation with those features
+           
+    Returns
+    -------
+        Pandas Series    
     """
     if verbose == True:
         start_time = timelib.time()

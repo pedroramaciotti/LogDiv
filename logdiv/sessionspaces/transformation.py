@@ -39,7 +39,19 @@ def weight(session_data_clustering,session_data, session_features):
 
 def session_transformation(session_data_clustering, session_features, lognorm_dimensions, verbose = False):
     """
-    Normalize and Weight selected session features. Return session_data
+    Normalize and Weight selected session features
+    
+    Parameters
+    ----------         
+        session_data_clustering: pandas dataframe of sessions for clusterisation
+
+        session_features: list of string, clusterisation with those features
+    
+        lognorm_dimensions: list of string, log normalisation with those features
+       
+    Returns
+    -------
+        Pandas Series   
     """
     if verbose == True:
         start_time_tot = timelib.time()

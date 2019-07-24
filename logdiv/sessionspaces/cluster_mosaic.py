@@ -72,6 +72,22 @@ def mosaic(session_data, weblog, features, type_cluster, weblog_columns_dict,fil
     """
     Plot cluster mosaic: take the 5 most representatives sessions of each cluster, draw the graph of each of them, show the timespan
     and when requests are made along timespan axe
+    
+    Parameters
+    ----------         
+        session_data: pandas dataframe of requests
+        
+        weblog: pandas dataframe of requests
+
+        features: list of string, to calculate centroids of clusters
+    
+        type_cluster: string
+       
+        weblog_columns_dict: dict
+       
+    Returns
+    -------
+        None
     """
     if verbose== True:
         start_time = timelib.time()

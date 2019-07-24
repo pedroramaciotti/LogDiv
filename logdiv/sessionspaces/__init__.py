@@ -18,4 +18,3 @@ from .boxplots import boxplot
 from .cluster_mosaic import mosaic
 
 from .cluster_tex import cluster_tex
-from .cluster_tex import cluster_tex_2

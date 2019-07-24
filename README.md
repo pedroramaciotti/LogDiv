@@ -114,6 +114,7 @@ This figure is the Gephi graph of dataset 2, where each color correspond to a di
 
 The file describing requests has the same structure than the one in example 1.
 The file describing pages is more concrete than the one in example 1:
+
 |item   |media   |continent    |
 |-------|--------|-------------|
 |item0  |Politics|Europe       |

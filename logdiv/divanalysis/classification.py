@@ -88,8 +88,8 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
     #heatmap
     image = ax.imshow(matrix,cmap="YlGn")
     ax.figure.colorbar(image, ax=ax)
-    ax.set_xticks(np.arange(matrix.shape[1]+1)-.5, minor=True)
-    ax.set_yticks(np.arange(matrix.shape[0]+1)-.5, minor=True)
+    ax.set_xticks(np.arange(matrix.shape[1]))
+    ax.set_yticks(np.arange(matrix.shape[0]))
     if ticks_theme=='inclined':
         ax.set_xticklabels(categories, rotation=45,ha='left')
         ax.set_yticklabels(categories, rotation=45)    

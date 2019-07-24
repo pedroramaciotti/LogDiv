@@ -1,5 +1,5 @@
 import pandas as pd
-import logdivv as logdiv
+import logdiv
 
 
 # retrieve YAML file
@@ -81,5 +81,5 @@ browsing_matrix, markov_matrix, diversifying_matrix,change_browsing_matrix = \
 
 categories = pages[pages_columns_dict['category_column']].unique()
 # plotting matrix
-logdiv.divanalysis.plot_pattern_matrix(browsing_matrix,list(categories)+['marg.'],\
+logdiv.divanalysis.plot_pattern_matrix(browsing_matrix,list(categories)+['marg.'],ticks_theme='greek',\
                                 xlabel='Browsing Matrix',verbose = True)

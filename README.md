@@ -24,10 +24,10 @@ LogDiv requires:
 
 
 ```shell
-$ pip install numpy
-$ pip install panda
-$ pip install matplotlib 
-$ pip install tqdm 
+$ python3 -m pip install numpy
+$ python3 -m pip install panda
+$ python3 -m pip install matplotlib 
+$ python3 -m pip install tqdm 
 ```
 
 Installing Graph-tool is more complicated: https://git.skewed.de/count0/graph-tool/wikis/installation-instructions
@@ -67,9 +67,10 @@ This file is self-explanatory.
 ### Documentation
 
 If you want precision on a function of LogDiv: 
-* what is the purpose of the function of LogDiv
+* what is the purpose of the function
 * what these functions take in entry
 * what they return
+
 you need to run in a Console Python:
 ```python
 >>> help(function)
@@ -122,7 +123,7 @@ The following example illustrates the entries format of the package.
 
 If you want to run example 1, you need to be in the directory datasets/example1, and run:
 ```shell
-$ python3 example_1.py parameters_1.yaml
+$ python3 example_1.py
 ```
 
 ### Example 2
@@ -132,6 +133,7 @@ $ python3 example_1.py parameters_1.yaml
 This figure is the Gephi graph of dataset 2, where each color correspond to a different media.
 
 The file describing requests has the same structure than the one in example 1.
+
 The file describing pages is more concrete than the one in example 1:
 
 |item   |media   |continent    |
@@ -142,7 +144,7 @@ The file describing pages is more concrete than the one in example 1:
 
 If you want to run example 2, you need to be in the directory datasets/example2, and run:
 ```shell
-$ python3 example_2.py parameters_2.yaml
+$ python3 example_2.py
 ```
 
 

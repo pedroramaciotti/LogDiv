@@ -3,25 +3,24 @@
 
 # Classify topics and categories that won't be used in 'other'
 
-def classifier(pages, topics, categories,pages_columns_dict):
+def classifier(pages, classification_column, classification_wanted,pages_columns_dict):
     """
-    Classify topics and categories that won't be used in 'other'
+    Classify classification that won't be used in 'other'
     
     Parameters
     ----------
         pages: pandas dataframe of pages
         
-        topics: list of items in analysis_column wanted to analyse
+        classification_column: string, classification column wanted to be classified
         
-        categories: list of items wanted to analyse
+        classification_wanted: list of string, classication wanted to be kept 
 
         pages_columns_dict: dict
 
     Returns
     -------
-        2 Pandas Series
+        Pandas Series
     """
     pages = pages.copy(deep=True)
-    pages.loc[~pages[pages_columns_dict['topic_column']].isin(topics), pages_columns_dict['topic_column']] = 'Other'
-    pages.loc[~pages[pages_columns_dict['category_column']].isin(categories), pages_columns_dict['category_column']] = 'other'
-    return pages[[pages_columns_dict['topic_column'],pages_columns_dict['category_column']]];
+    pages.loc[~pages[classification_column].isin(classification_wanted), classification_column] = 'Other'
+    return pages[classification_column];

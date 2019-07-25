@@ -1,6 +1,6 @@
-from .clusterization import supervised
+from .clusterization import kmeans
 from .clusterization import hierarchical
-from .clusterization import unsupervised
+from .clusterization import dbscan
 
 from .pca import compute_pca
 from .pca import plot_explained_variance

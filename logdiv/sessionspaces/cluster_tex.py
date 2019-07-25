@@ -17,7 +17,7 @@ def ShannonEntropy(P,normalize=False):
     P=P[P>1e-20]
     return -np.sum(P*np.log2(P));
 
-def cluster_tex(f, session_data_threshold,weblog,cluster_type,entropy_group,ieuc_group):
+def cluster_tex(f, session_data_threshold,weblog,cluster_type,classification_column,entropy_group,ieuc_group):
     """
     Write in latex the number of sessions, entropy, ieuc, entropy indvidual, ieuc individual of each cluster
     
@@ -30,6 +30,8 @@ def cluster_tex(f, session_data_threshold,weblog,cluster_type,entropy_group,ieuc
         weblog: pandas dataframe of requests
         
         cluster_type: string, cluster type wanted
+        
+        classification_column: string, classification_column with which calculate diversity
 
         entropy_group: numpy array, recupered with function "group_entropy"
         
@@ -61,7 +63,7 @@ def cluster_tex(f, session_data_threshold,weblog,cluster_type,entropy_group,ieuc
         
         cluster_session_list=session_data_threshold[session_data_threshold[cluster_type]==cluster_id].session_id.values
         temp_cluster_weblog=weblog[weblog.session_id.isin(cluster_session_list)]
-        pa,pa_names = proportional_abundance(temp_cluster_weblog,'requested_topic')
+        pa,pa_names = proportional_abundance(temp_cluster_weblog,'requested_'+classification_column)
         cluster_entropy=ShannonEntropy(pa,normalize=True)
         
         entropy_clusters.append(str(round(cluster_entropy,2)))

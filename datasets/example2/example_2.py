@@ -1,5 +1,5 @@
 import pandas as pd
-import logdiv
+import logdivv as logdiv
 
 
 ###########################################
@@ -9,7 +9,7 @@ import logdiv
 # checking script was call correctly and retrieving
 # the file with the parameters for the execution
 #filename=file_functions.check_arguments(sys.argv) # temporary just for spyder
-filename = 'parameters_2.yaml'
+filename = './parameters_2.yaml'
 #############################################
 # Retrieving execution parameters from file #
 #############################################
@@ -29,12 +29,6 @@ requests_threshold_per_session = parameters['session_data']['requests_threshold_
 # page information file
 pages=pd.read_csv(parameters['input_files']['pages_file'],low_memory=False)
 
-# Selecting 6 most popular topic and category
-categories = pages[pages_columns_dict['category_column']].value_counts().index[:6]
-topics = pages[pages_columns_dict['topic_column']].value_counts().index[:6]
-
-# Reclassifying categories and topics that won't be used in the analysis
-pages[[pages_columns_dict['topic_column'],pages_columns_dict['category_column']]] = logdiv.weblogtransform.classifier(pages,topics,categories,pages_columns_dict)
 ################################################
 # Reading weblog file, weblog tranform and     #
 # sessionisation or loading pkl weblog file    #
@@ -54,7 +48,7 @@ weblog.drop_duplicates(subset=[weblog_columns_dict['requested_page_column'],\
                                weblog_columns_dict['referrer_page_column'],'session_id'],inplace=True)
 
 # including page classifications in log
-weblog = logdiv.weblogtransform.assign_page_classification(weblog,pages,weblog_columns_dict,pages_columns_dict)
+weblog = logdiv.weblogtransform.assign_page_classification(weblog,pages,['class1','class2'],weblog_columns_dict,pages_columns_dict)
 
 ###############################################
 # Session Table and Session Feature Space     #
@@ -124,18 +118,19 @@ session_data.loc[session_data.requests == 4, '4_requests'] = True
 
 # Aggregated diversity
 proportion_data, entropy_matrix = logdiv.divanalysis.proportion_group(\
-                                    weblog, session_data,'requested_topic', pages[pages_columns_dict['topic_column']].unique(),\
+                                    weblog, session_data,'requested_class1', pages['class1'].unique(),\
                                     ['4_requests','>4_requests'],verbose = True)
 logdiv.divanalysis.plot_aggregated(proportion_data, entropy_matrix)
 
 # Temporal diversity
-timeseries_data = logdiv.divanalysis.temporal_analysis(weblog,session_data,'requested_topic',parameters['temporal_filtering']['temporal_start'],\
+timeseries_data = logdiv.divanalysis.temporal_analysis(weblog,session_data,'class1',parameters['temporal_filtering']['temporal_start'],\
                                                 parameters['temporal_filtering']['temporal_end'],\
                                                 ['4_requests','>4_requests'], weblog_columns_dict,verbose = True)
 logdiv.divanalysis.plot_temporal(timeseries_data,['4_requests','>4_requests'],verbose = True)
 
+categories = pages['class1'].unique()
 # Classification diversity
-browsing_matrix, markov_matrix, diversifying_matrix,change_browsing_matrix = logdiv.divanalysis.classification_diversity(weblog, categories, requests_threshold_per_session,verbose = True)
+browsing_matrix, markov_matrix, diversifying_matrix,change_browsing_matrix = logdiv.divanalysis.classification_diversity(weblog,'class1', categories,'class2', requests_threshold_per_session,verbose = True)
 
 
 # plotting matrix

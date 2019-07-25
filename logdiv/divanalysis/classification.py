@@ -4,15 +4,20 @@ import numpy as np
 import matplotlib
 import time as timelib
 
-def classification_diversity(weblog, categories, threshold_requests_per_session = 0, verbose = False):
+def classification_diversity(weblog,classification_column_transaction,classification_wanted_transaction,\
+                             classification_column_diversity, threshold_requests_per_session = 0, verbose = False):
     """
-    Calculate matrices using matrix_calculator.py. Select requested_category and referrer_category of weblog that are in entry "categories"
+    Calculate matrices using matrix_calculator.py. Select requested_classification and referrer_classification of weblog that are in entry "classification"
     
     Parameters
     ----------
         weblog: pandas dataframe of requests
                         
-        categories: list of items wanted to analyse
+        classification_column_transaction: string, classification used for the proportion of transaction
+        
+        classification_wanted_transaction: list of string, calculate transaction with those items
+        
+        classification_column_diversity: string, classification used to calculate diversifying matrix
         
         threshold_requests_per_session: int for filter number of requests per session
         
@@ -28,23 +33,23 @@ def classification_diversity(weblog, categories, threshold_requests_per_session 
     sessions_requests_over_threshold=list(requests_per_session[requests_per_session>threshold_requests_per_session].index)
     divpat_log = weblog[weblog.session_id.isin(sessions_requests_over_threshold)]
     # Filtering some requests
-    divpat_log=divpat_log[divpat_log.requested_category.isin(categories)]
-    divpat_log=divpat_log[divpat_log.referrer_category.isin(categories)]
+    divpat_log=divpat_log[divpat_log['requested_'+classification_column_transaction].isin(classification_wanted_transaction)]
+    divpat_log=divpat_log[divpat_log['referrer_'+classification_column_transaction].isin(classification_wanted_transaction)]
     # Defining matrices
-    diversity_columns=('referrer_topic','requested_topic')
-    browsing_matrix,_ = matrix_calculator.compute_browsing_matrix(divpat_log,'referrer_category','requested_category',labels=categories)
-    markov_matrix,_ = matrix_calculator.compute_markov_matrix(divpat_log,'referrer_category','requested_category',labels=categories)
-    diversifying_matrix,_ = matrix_calculator.compute_diversifying_matrix(divpat_log,'referrer_category','requested_category',\
-                                                                             diversity_columns,labels = categories,threshold=2)
-    # Selecting sessions only with requests that have changed topic
-    divpat_log = divpat_log[divpat_log.requested_topic != divpat_log.referrer_topic]
-    change_browsing_matrix,_ = matrix_calculator.compute_browsing_matrix(divpat_log,'referrer_category','requested_category',labels=categories)
+    diversity_columns=('referrer_'+classification_column_diversity,'requested_'+classification_column_diversity)
+    browsing_matrix,_ = matrix_calculator.compute_browsing_matrix(divpat_log,'referrer_'+classification_column_transaction,'requested_'+classification_column_transaction,labels=classification_wanted_transaction)
+    markov_matrix,_ = matrix_calculator.compute_markov_matrix(divpat_log,'referrer_'+classification_column_transaction,'requested_'+classification_column_transaction,labels=classification_wanted_transaction)
+    diversifying_matrix,_ = matrix_calculator.compute_diversifying_matrix(divpat_log,'referrer_'+classification_column_transaction,'requested_'+classification_column_transaction,\
+                                                                             diversity_columns,labels = classification_wanted_transaction,threshold=2)
+    # Selecting sessions only with requests that have changed classification_diversity
+    divpat_log = divpat_log[divpat_log['requested_'+classification_column_diversity] != divpat_log['referrer_'+classification_column_diversity]]
+    change_browsing_matrix,_ = matrix_calculator.compute_browsing_matrix(divpat_log,'referrer_'+classification_column_transaction,'requested_'+classification_column_transaction,labels=classification_wanted_transaction)
 
     if verbose == True:
         print("     Matrix computed in %.1f seconds."%(timelib.time() - start_time))
     return browsing_matrix, markov_matrix, diversifying_matrix,change_browsing_matrix;
 
-def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel='',ylabel='',\
+def plot_pattern_matrix(matrix,classification_wanted_transaction,ticks_theme='inclined',title='',xlabel='',ylabel='',\
                         text_place = 'fig', fs=12,xlabelfs=18,filename = None,verbose = False):
     """
     Plot matrix with heatmap method 
@@ -53,7 +58,7 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
     ----------
         matrix: numpy array wanted to plot
                         
-        categories: list of items wanted to analyse corresponding to the ones given in 
+        classification_wanted_transaction: list of items wanted to analyse corresponding to the ones given in 
                     classification_diversity
         
         ticks_theme: string for theme used to plot:
@@ -91,11 +96,11 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
     ax.set_xticks(np.arange(matrix.shape[1]))
     ax.set_yticks(np.arange(matrix.shape[0]))
     if ticks_theme=='inclined':
-        ax.set_xticklabels(categories, rotation=45,ha='left')
-        ax.set_yticklabels(categories, rotation=45)    
+        ax.set_xticklabels(classification_wanted_transaction, rotation=45,ha='left')
+        ax.set_yticklabels(classification_wanted_transaction, rotation=45)    
         
     elif ticks_theme=='abreviation':
-        ticks = [cat[:2] for cat in categories]
+        ticks = [cat[:2] for cat in classification_wanted_transaction]
         text_box = []
         for ind,tick in enumerate(ticks):
             counter=2
@@ -103,9 +108,9 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
                 counter+=1
                 indices = [i for i, x in enumerate(ticks) if x == tick]
                 for index in indices: 
-                    ticks[index]=categories[index][:counter]
-                tick = categories[ind][:counter]
-            text_box.append('%s: %s'%(tick,categories[ind]))
+                    ticks[index]=classification_wanted_transaction[index][:counter]
+                tick = classification_wanted_transaction[ind][:counter]
+            text_box.append('%s: %s'%(tick,classification_wanted_transaction[ind]))
         props = dict(boxstyle='round', facecolor='wheat', alpha=1.0)
         if text_place=='fig':
             ax.text(0.25,1.7,'\n'.join(text_box), transform=ax.transAxes, fontsize=10,
@@ -119,8 +124,8 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
                          '\u03bb','\u03bc','\u03bd','\u03be','\u03bf']
         text_box = []
         ticks = []
-        for i in range(len(categories)):
-            text_box.append('%s : %s'%(greek_letters[i],categories[i]))
+        for i in range(len(classification_wanted_transaction)):
+            text_box.append('%s : %s'%(greek_letters[i],classification_wanted_transaction[i]))
             ticks.append(greek_letters[i])
         props = dict(boxstyle='round', facecolor='wheat', alpha=1.0) 
         if text_place=='fig':
@@ -132,8 +137,8 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
     elif ticks_theme == 'dict':
         text_box = []
         ticks = []
-        for key in sorted(categories.keys()):
-            text_box.append('%s : %s'%(key,categories[key]))
+        for key in sorted(classification_wanted_transaction.keys()):
+            text_box.append('%s : %s'%(key,classification_wanted_transaction[key]))
             ticks.append(key)
         props = dict(boxstyle='round', facecolor='wheat', alpha=1.0) 
         if text_place=='fig':
@@ -156,8 +161,8 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
         spine.set_visible(False)
     ax.grid(which="minor", color="w", linestyle='-', linewidth=7)
     ax.tick_params(which="minor", bottom=False, left=False)
-    ax.axvline(len(categories)-1.5, linestyle='-', color='r')
-    ax.axhline(len(categories)-1.5, linestyle='-', color='r')
+    ax.axvline(len(classification_wanted_transaction)-1.5, linestyle='-', color='r')
+    ax.axhline(len(classification_wanted_transaction)-1.5, linestyle='-', color='r')
     textcolors=["black", "white"]
     if not isinstance(matrix, (list, np.ndarray)):
         matrix = image.get_array()
@@ -196,7 +201,7 @@ def plot_pattern_matrix(matrix,categories,ticks_theme='inclined',title='',xlabel
     plt.close()
     return;
     
-def classification_tex(f, weblog, threshold_requests_per_session,categories,weblog_columns_dict):
+def classification_tex(f, weblog, threshold_requests_per_session,classification_wanted_transaction,weblog_columns_dict):
     """
     Write on latex file information variables on classification
     
@@ -208,7 +213,7 @@ def classification_tex(f, weblog, threshold_requests_per_session,categories,webl
         
         threshold_requests_per_session: int for filter number of requests per session
                         
-        categories: list of items wanted to analyse corresponding to the ones given in 
+        classification_wanted_transaction: list of items wanted to analyse corresponding to the ones given in 
                     classification_diversity
         
         weblog_columns_dict: dict recupered with function of 'file_function'
@@ -217,7 +222,7 @@ def classification_tex(f, weblog, threshold_requests_per_session,categories,webl
     -------
         File (Optionnal)
     """
-    categories = list(set(categories)-{'social','search','other'})
+    classification_wanted_transaction = list(set(classification_wanted_transaction)-{'social','search','other'})
 
     
     requests_per_session=weblog.groupby('session_id').size()
@@ -229,7 +234,7 @@ def classification_tex(f, weblog, threshold_requests_per_session,categories,webl
     divpat_log=divpat_log[~divpat_log.referrer_category.isin(['social','search','other'])]
     num_reqs_selected_cats=divpat_log.shape[0]
     
-    #divpat_log=divpat_log[divpat_log.requested_category.isin(categories)]
+    #divpat_log=divpat_log[divpat_log.requested_category.isin(classification_wanted_transaction)]
     
     f.write("\n% 5. Diversifying patterns according to classification")
     f.write("\n\\newcommand{\\%s}{%.1f}"%('PCDivPatTotalSelectedCat',100.0*num_reqs_selected_cats/num_reqs_inside))
@@ -240,7 +245,7 @@ def classification_tex(f, weblog, threshold_requests_per_session,categories,webl
             set(divpat_log[weblog_columns_dict['referrer_page_column']].unique())))))  
     return f;
 
-def matrix_tex(f, browsing_matrix, diversifying_matrix, categories):
+def matrix_tex(f, browsing_matrix, diversifying_matrix, classification_wanted_transaction):
     """
     Write on latex file the most 
     
@@ -252,7 +257,7 @@ def matrix_tex(f, browsing_matrix, diversifying_matrix, categories):
         
         diversifying_matrix: diversifying numpy array wanted to write
                         
-        categories: list of items wanted to analyse corresponding to the ones given in 
+        classification_wanted_transaction: list of items wanted to analyse corresponding to the ones given in 
                     classification_diversity
                     
     Returns
@@ -260,17 +265,17 @@ def matrix_tex(f, browsing_matrix, diversifying_matrix, categories):
         File (Optionnal)
     """
     digit_dic={'0':'Zero','1':'One','2':'Two','3':'Three','4':'Four','5':'Five','6':'Six','7':'Seven','8':'Eight','9':'Nine'}
-    divpat_categories = list(set(categories)-{'social','search','other'})
-    divpat_N_categories=len(divpat_categories)
+    divpat_classification_wanted_transaction = list(set(classification_wanted_transaction)-{'social','search','other'})
+    divpat_N_classification_wanted_transaction=len(divpat_classification_wanted_transaction)
     # Browsing patterns
-    r,c=np.unravel_index(browsing_matrix[:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_categories,divpat_N_categories))
+    r,c=np.unravel_index(browsing_matrix[:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_classification_wanted_transaction,divpat_N_classification_wanted_transaction))
     
     for i in range(3):
-        f.write("\n\\newcommand{\\%s}{%s}"%('GlobalBP%sName'%(digit_dic[str(i+1)]),'%s$\\rightarrow$%s'%(divpat_categories[r[i]],divpat_categories[c[i]])  ))
+        f.write("\n\\newcommand{\\%s}{%s}"%('GlobalBP%sName'%(digit_dic[str(i+1)]),'%s$\\rightarrow$%s'%(divpat_classification_wanted_transaction[r[i]],divpat_classification_wanted_transaction[c[i]])  ))
         f.write("\n\\newcommand{\\%s}{%0.1f}"%('GlobalBP%sValue'%(digit_dic[str(i+1)]),100.0*browsing_matrix[r[i],c[i]]))
     #  Diversifying patterns
-    r,c=np.unravel_index(np.nan_to_num(diversifying_matrix)[:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_categories,divpat_N_categories))
+    r,c=np.unravel_index(np.nan_to_num(diversifying_matrix)[:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_classification_wanted_transaction,divpat_N_classification_wanted_transaction))
     for i in range(3):
-        f.write("\n\\newcommand{\\%s}{%s}"%('GlobalDP%sName'%(digit_dic[str(i+1)]),'%s$\\rightarrow$%s'%(divpat_categories[r[i]],divpat_categories[c[i]])  ))
+        f.write("\n\\newcommand{\\%s}{%s}"%('GlobalDP%sName'%(digit_dic[str(i+1)]),'%s$\\rightarrow$%s'%(divpat_classification_wanted_transaction[r[i]],divpat_classification_wanted_transaction[c[i]])  ))
         f.write("\n\\newcommand{\\%s}{%0.1f}"%('GlobalDP%sValue'%(digit_dic[str(i+1)]),100.0*diversifying_matrix[r[i],c[i]]))
     return f;

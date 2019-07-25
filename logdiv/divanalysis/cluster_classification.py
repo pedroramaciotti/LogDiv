@@ -3,20 +3,25 @@ from .matrix_calculator import compute_diversifying_matrix
 import time as timelib
 import numpy as np
 
-def cluster_classification(weblog, session_data_threshold, cluster_type, categories, verbose = False):
+def cluster_classification(weblog,classification_column_transaction,\
+                             classification_column_diversity, session_data_threshold, cluster_type, classification_wanted_transaction, verbose = False):
     """
     Call function of matrix_calculator.py to return matrices for each cluster. 
-    Select requested_category of weblog that are only in entry "categories"
+    Select 'requested_'+classification_column_transaction of weblog that are only in entry "classification_wanted_transaction"
     
     Parameters
     ----------
         weblog: pandas dataframe of requests
+        
+        classification_column_transaction: string, classification used for the proportion of transaction
+        
+        classification_column_diversity: string, classification used to calculate diversifying matrix
                         
         session_data_threshold: pandas dataframe to select requests
         
         cluster_type: string
         
-        categories: list of items wanted to analyse
+        classification_wanted_transaction: list of items wanted to analyse
 
         
     Returns
@@ -26,7 +31,6 @@ def cluster_classification(weblog, session_data_threshold, cluster_type, categor
     if verbose== True:
         start_time = timelib.time()
         print("\n   * Computing cluster matrices ...")    
-    categories = list(set(categories)-{'social','search','other'})
     browsing_matrix = {}
     diversifying_matrix = {}
     # Selecting sessions from each cluster
@@ -34,14 +38,14 @@ def cluster_classification(weblog, session_data_threshold, cluster_type, categor
         sessions_cluster = session_data_threshold[session_data_threshold[cluster_type]==cluster_id].session_id
         divpat_log = weblog[weblog.session_id.isin(sessions_cluster)]
         # Filtering some requests
-        divpat_log=divpat_log[divpat_log.requested_category.isin(categories)]
-        divpat_log=divpat_log[divpat_log.referrer_category.isin(categories)]
+        divpat_log=divpat_log[divpat_log['requested_'+classification_column_transaction].isin(classification_wanted_transaction)]
+        divpat_log=divpat_log[divpat_log['referrer_'+classification_column_transaction].isin(classification_wanted_transaction)]
         
          # Defining matrices
-        diversity_columns=('referrer_topic','requested_topic')
-        browsing_matrix[cluster_id],_ = compute_browsing_matrix(divpat_log,'referrer_category','requested_category',labels=categories)
-        diversifying_matrix[cluster_id],_ = compute_diversifying_matrix(divpat_log,'referrer_category','requested_category',\
-                                                                             diversity_columns,labels = categories)
+        diversity_columns=('referrer_'+classification_column_diversity,'requested_'+classification_column_diversity)
+        browsing_matrix[cluster_id],_ = compute_browsing_matrix(divpat_log,'referrer_'+classification_column_transaction,'requested_'+classification_column_transaction,labels=classification_wanted_transaction)
+        diversifying_matrix[cluster_id],_ = compute_diversifying_matrix(divpat_log,'referrer_'+classification_column_transaction,'requested_'+classification_column_transaction,\
+                                                                             diversity_columns,labels = classification_wanted_transaction)
     if verbose == True:
         print("     Cluster matrices computed in %.1f seconds."%(timelib.time() - start_time))
         
@@ -86,7 +90,7 @@ def ShannonEntropy(P,normalize=False):
     P=P[P>1e-20]
     return -np.sum(P*np.log2(P));
 
-def cluster_classification_tex(f,browsing_matrix,diversifying_matrix, weblog,session_data_threshold,cluster_type,categories):
+def cluster_classification_tex(f,browsing_matrix,diversifying_matrix, weblog,session_data_threshold,cluster_type,classification_column_diversity,classification_wanted_transaction):
     """
     Write on latex file variables that are calculated with cluster classification
     
@@ -104,15 +108,17 @@ def cluster_classification_tex(f,browsing_matrix,diversifying_matrix, weblog,ses
 
         cluster_type: strings
         
-        categories: list of items wanted to analyse corresponding to the ones given in 
+        classification_column_diversity: string, classification used to calculate diversifying matrix
+        
+        classification_wanted_transaction: list of items wanted to analyse corresponding to the ones given in 
                     classification_diversity
                     
     Returns
     -------
         File (Optionnal)
     """
-    divpat_categories = list(set(categories)-{'social','search','other'})
-    divpat_N_categories=len(divpat_categories)
+    divpat_classification_wanted_transaction = classification_wanted_transaction
+    divpat_N_classification_wanted_transaction=len(divpat_classification_wanted_transaction)
     f.write("\n% 6. Cluster Classification")
     columns_latex = '|'+'c|'*len(session_data_threshold[cluster_type].unique())
     f.write("\n\\newcommand{\\%s}{%s}"%('DivColumnsLatex',columns_latex))      
@@ -135,23 +141,23 @@ def cluster_classification_tex(f,browsing_matrix,diversifying_matrix, weblog,ses
         
         cluster_session_list=session_data_threshold[session_data_threshold[cluster_type]==cluster_id].session_id.values
         temp_cluster_weblog=weblog[weblog.session_id.isin(cluster_session_list)]
-        pa,pa_names = proportional_abundance(temp_cluster_weblog,'requested_topic')
+        pa,pa_names = proportional_abundance(temp_cluster_weblog,'requested_'+classification_column_diversity)
         cluster_entropy=ShannonEntropy(pa,normalize=True)
     
         ieuc_clusters.append(str(round(np.power(2.0,cluster_entropy),2)))
         star_chain_like_clusters.append(star_chain_str(session_data_threshold[session_data_threshold[cluster_type]==cluster_id].star_chain_like.mean()))
         length_clusters.append(length(session_data_threshold[session_data_threshold[cluster_type]==cluster_id].requests.mean()))
         # Browsing patterns
-        r,c=np.unravel_index(browsing_matrix[cluster_id][:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_categories,divpat_N_categories))
-        browsing_pattern_1.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*browsing_matrix[cluster_id][r[0],c[0]],divpat_categories[r[0]],divpat_categories[c[0]]))
-        browsing_pattern_2.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*browsing_matrix[cluster_id][r[1],c[1]],divpat_categories[r[1]],divpat_categories[c[1]]))
-        browsing_pattern_3.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*browsing_matrix[cluster_id][r[2],c[2]],divpat_categories[r[2]],divpat_categories[c[2]]))
+        r,c=np.unravel_index(browsing_matrix[cluster_id][:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_classification_wanted_transaction,divpat_N_classification_wanted_transaction))
+        browsing_pattern_1.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*browsing_matrix[cluster_id][r[0],c[0]],divpat_classification_wanted_transaction[r[0]],divpat_classification_wanted_transaction[c[0]]))
+        browsing_pattern_2.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*browsing_matrix[cluster_id][r[1],c[1]],divpat_classification_wanted_transaction[r[1]],divpat_classification_wanted_transaction[c[1]]))
+        browsing_pattern_3.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*browsing_matrix[cluster_id][r[2],c[2]],divpat_classification_wanted_transaction[r[2]],divpat_classification_wanted_transaction[c[2]]))
         
         #  Diversifying patterns
-        r,c=np.unravel_index(np.nan_to_num(diversifying_matrix[cluster_id])[:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_categories,divpat_N_categories))
-        diversifying_pattern_1.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*diversifying_matrix[cluster_id][r[0],c[0]],divpat_categories[r[0]],divpat_categories[c[0]]))
-        diversifying_pattern_2.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*diversifying_matrix[cluster_id][r[1],c[1]],divpat_categories[r[1]],divpat_categories[c[1]]))
-        diversifying_pattern_3.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*diversifying_matrix[cluster_id][r[2],c[2]],divpat_categories[r[2]],divpat_categories[c[2]]))
+        r,c=np.unravel_index(np.nan_to_num(diversifying_matrix[cluster_id])[:-1,:-1].argsort(axis=None)[::-1][:3],dims=(divpat_N_classification_wanted_transaction,divpat_N_classification_wanted_transaction))
+        diversifying_pattern_1.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*diversifying_matrix[cluster_id][r[0],c[0]],divpat_classification_wanted_transaction[r[0]],divpat_classification_wanted_transaction[c[0]]))
+        diversifying_pattern_2.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*diversifying_matrix[cluster_id][r[1],c[1]],divpat_classification_wanted_transaction[r[1]],divpat_classification_wanted_transaction[c[1]]))
+        diversifying_pattern_3.append('%.1f\%%: %s$\\rightarrow$%s'%(100.0*diversifying_matrix[cluster_id][r[2],c[2]],divpat_classification_wanted_transaction[r[2]],divpat_classification_wanted_transaction[c[2]]))
 
         del temp_cluster_weblog
     

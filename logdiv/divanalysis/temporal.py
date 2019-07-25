@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
-import tqdm
 import time as timelib
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt   
 
 # local modules
 
@@ -10,7 +9,7 @@ from . import function
 
 
 
-def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_weblog_start, temporal_analysis_weblog_end,\
+def temporal_analysis(weblog, session_data, classification_column, temporal_analysis_weblog_start, temporal_analysis_weblog_end,\
                       group_names, weblog_column_dict,micd = False, verbose = False):
     """
     Calculate temporal (each hour) number of requests, entropy consummed,
@@ -23,7 +22,7 @@ def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_w
          
         session_data: pandas dataframe of requests
 
-        analysis_column: pandas dataframe column wanted to analyse
+        classification_column: pandas dataframe column wanted to be analysed
     
         temporal_analysis_weblog_start: start timestamp
    
@@ -67,60 +66,111 @@ def temporal_analysis(weblog, session_data, analysis_column, temporal_analysis_w
     year = temporal_analysis_weblog_start.year
     month = temporal_analysis_weblog_start.month
     yesterday = temporal_analysis_weblog_start.day
-    for day in tqdm.tqdm(t_days):
-        if day < yesterday: month += 1
-        if month > 12:
-            month = 1
-            year += 1
-        for hour in t_hours:
-            start_time=pd.Timestamp('%d-%d-%d %s:00:00'%(year,month,day,function.zf(hour)))
-            end_time=pd.Timestamp('%d-%d-%d %s:59:59'%(year,month,day,function.zf(hour)))
-            timeseries_data['start_time'][counter] = start_time
-            timeseries_data['end_time'][counter] = end_time
-            hour_weblog=t_weblog[t_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))>start_time]
-            hour_weblog=hour_weblog[hour_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))<end_time]
-            hour_session = session_data[session_data.session_id.isin(hour_weblog.session_id.unique())]
-            # Total
-            timeseries_data['t_activity_total'][counter]=hour_weblog.shape[0]
-            if hour_weblog.shape[0]>0:
-                pa_consumed,aux=function.proportional_abundance(hour_weblog,analysis_column)
-                pa_offered,aux=function.proportional_abundance(hour_weblog.drop_duplicates\
-                                                               (subset=weblog_column_dict['requested_page_column']),analysis_column)
-                timeseries_data['t_consumed_diversity_total'][counter]=function.ShannonEntropy(pa_consumed)
-                timeseries_data['t_offered_diversity_total'][counter]=function.ShannonEntropy(pa_offered)
-                if micd: timeseries_data['t_mean_ind_cons_div_total'][counter]=hour_session.topic_entropy.mean()
-            # Groups 
-            for group_name in group_names:
-                list_sessions = session_data[session_data[group_name]].session_id.values
-                weblog_tmp = hour_weblog[hour_weblog.session_id.isin(list_sessions)]
-                session_tmp = hour_session[hour_session.session_id.isin(list_sessions)]
-                timeseries_data['t_activity_'+group_name][counter] = weblog_tmp.shape[0]
-                if weblog_tmp.shape[0]>0:
-                    pa_consumed, aux = function.proportional_abundance(weblog_tmp,analysis_column)
-                    pa_offered,aux=function.proportional_abundance(weblog_tmp.drop_duplicates\
-                                                                   (subset=weblog_column_dict['requested_page_column']),analysis_column)
-                    timeseries_data['t_consumed_diversity_'+group_name][counter] = function.ShannonEntropy(pa_consumed)
-                    timeseries_data['t_offered_diversity_'+group_name][counter]=function.ShannonEntropy(pa_offered)
-                    if micd: timeseries_data['t_mean_ind_cons_div_'+group_name][counter]=session_tmp.topic_entropy.mean()
-            # Aux
-            counter+=1
-        del hour_weblog
-        yesterday = day 
+    try:    
+        import tqdm
+        for day in tqdm.tqdm(t_days):
+            if day < yesterday: month += 1
+            if month > 12:
+                month = 1
+                year += 1
+            for hour in t_hours:
+                start_time=pd.Timestamp('%d-%d-%d %s:00:00'%(year,month,day,function.zf(hour)))
+                end_time=pd.Timestamp('%d-%d-%d %s:59:59'%(year,month,day,function.zf(hour)))
+                timeseries_data['start_time'][counter] = start_time
+                timeseries_data['end_time'][counter] = end_time
+                hour_weblog=t_weblog[t_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))>start_time]
+                hour_weblog=hour_weblog[hour_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))<end_time]
+                hour_session = session_data[session_data.session_id.isin(hour_weblog.session_id.unique())]
+                # Total
+                timeseries_data['t_activity_total'][counter]=hour_weblog.shape[0]
+                if hour_weblog.shape[0]>0:
+                    pa_consumed,aux=function.proportional_abundance(hour_weblog,'requested_'+classification_column)
+                    pa_offered,aux=function.proportional_abundance(hour_weblog.drop_duplicates\
+                                                                   (subset=weblog_column_dict['requested_page_column']),'requested_'+classification_column)
+                    timeseries_data['t_consumed_diversity_total'][counter]=function.ShannonEntropy(pa_consumed)
+                    timeseries_data['t_offered_diversity_total'][counter]=function.ShannonEntropy(pa_offered)
+                    if micd: timeseries_data['t_mean_ind_cons_div_total'][counter]=hour_session[classification_column+'_entropy'].mean()
+                # Groups 
+                for group_name in group_names:
+                    list_sessions = session_data[session_data[group_name]].session_id.values
+                    weblog_tmp = hour_weblog[hour_weblog.session_id.isin(list_sessions)]
+                    session_tmp = hour_session[hour_session.session_id.isin(list_sessions)]
+                    timeseries_data['t_activity_'+group_name][counter] = weblog_tmp.shape[0]
+                    if weblog_tmp.shape[0]>0:
+                        pa_consumed, aux = function.proportional_abundance(weblog_tmp,'requested_'+classification_column)
+                        pa_offered,aux=function.proportional_abundance(weblog_tmp.drop_duplicates\
+                                                                       (subset=weblog_column_dict['requested_page_column']),'requested_'+classification_column)
+                        timeseries_data['t_consumed_diversity_'+group_name][counter] = function.ShannonEntropy(pa_consumed)
+                        timeseries_data['t_offered_diversity_'+group_name][counter]=function.ShannonEntropy(pa_offered)
+                        if micd: timeseries_data['t_mean_ind_cons_div_'+group_name][counter]=session_tmp[classification_column+'_entropy'].mean()
+                # Aux
+                counter+=1
+            del hour_weblog
+            yesterday = day 
+            
+    except ImportError:
+        for day in t_days:
+            if day < yesterday: month += 1
+            if month > 12:
+                month = 1
+                year += 1
+            for hour in t_hours:
+                start_time=pd.Timestamp('%d-%d-%d %s:00:00'%(year,month,day,function.zf(hour)))
+                end_time=pd.Timestamp('%d-%d-%d %s:59:59'%(year,month,day,function.zf(hour)))
+                timeseries_data['start_time'][counter] = start_time
+                timeseries_data['end_time'][counter] = end_time
+                hour_weblog=t_weblog[t_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))>start_time]
+                hour_weblog=hour_weblog[hour_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))<end_time]
+                hour_session = session_data[session_data.session_id.isin(hour_weblog.session_id.unique())]
+                # Total
+                timeseries_data['t_activity_total'][counter]=hour_weblog.shape[0]
+                if hour_weblog.shape[0]>0:
+                    pa_consumed,aux=function.proportional_abundance(hour_weblog,'requested_'+classification_column)
+                    pa_offered,aux=function.proportional_abundance(hour_weblog.drop_duplicates\
+                                                                   (subset=weblog_column_dict['requested_page_column']),'requested_'+classification_column)
+                    timeseries_data['t_consumed_diversity_total'][counter]=function.ShannonEntropy(pa_consumed)
+                    timeseries_data['t_offered_diversity_total'][counter]=function.ShannonEntropy(pa_offered)
+                    if micd: timeseries_data['t_mean_ind_cons_div_total'][counter]=hour_session[classification_column+'_entropy'].mean()
+                # Groups 
+                for group_name in group_names:
+                    list_sessions = session_data[session_data[group_name]].session_id.values
+                    weblog_tmp = hour_weblog[hour_weblog.session_id.isin(list_sessions)]
+                    session_tmp = hour_session[hour_session.session_id.isin(list_sessions)]
+                    timeseries_data['t_activity_'+group_name][counter] = weblog_tmp.shape[0]
+                    if weblog_tmp.shape[0]>0:
+                        pa_consumed, aux = function.proportional_abundance(weblog_tmp,'requested_'+classification_column)
+                        pa_offered,aux=function.proportional_abundance(weblog_tmp.drop_duplicates\
+                                                                       (subset=weblog_column_dict['requested_page_column']),'requested_'+classification_column)
+                        timeseries_data['t_consumed_diversity_'+group_name][counter] = function.ShannonEntropy(pa_consumed)
+                        timeseries_data['t_offered_diversity_'+group_name][counter]=function.ShannonEntropy(pa_offered)
+                        if micd: timeseries_data['t_mean_ind_cons_div_'+group_name][counter]=session_tmp[classification_column+'_entropy'].mean()
+                # Aux
+                counter+=1
+            del hour_weblog
+            yesterday = day 
+    
+
         
     if verbose == True:
         print("     Temporal analysis computed in %.1f seconds."%(timelib.time() - start_time_tot))
     return timeseries_data;
 
 
-def temporal_analysis_article(weblog, temporal_analysis_weblog_start, temporal_analysis_weblog_end, weblog_column_dict,verbose = False):
+def temporal_analysis_article(weblog, classification_column_diversity, classification_column_transaction, transaction,temporal_analysis_weblog_start, temporal_analysis_weblog_end, weblog_column_dict,verbose = False):
     """
     Calculate temporal (each 6 hours) number of requests article -> article and 
-    number of requests article -> article that have changed topic
+    number of requests article -> article that have changed classification
     
     Parameters
     ----------
     weblog: pandas dataframe of requests
-             
+    
+    classification_column_diversity: pandas dataframe column wanted to be analysed
+ 
+    classification_column_transaction: pandas dataframe column wanted to be selected for transaction
+    
+    transaction: string, belonging to the items of classification_column_transaction
+            
     temporal_analysis_weblog_start: start timestamp
    
     temporal_analysis_weblog_end: end timestamp
@@ -146,7 +196,7 @@ def temporal_analysis_article(weblog, temporal_analysis_weblog_start, temporal_a
         t_days = list(range(int(start_day),int(end_day)+1))
     t_hours=list(range(0,24))
 
-    column_names = ['start_time','end_time','t_activity_article','t_activity_article_change_topic']
+    column_names = ['start_time','end_time','t_activity_article','t_activity_article_change_class']
     timeseries_data=pd.DataFrame(columns=column_names)
     for columns in timeseries_data:
         timeseries_data[columns] = np.zeros(len(t_days)*len(t_hours))
@@ -155,7 +205,7 @@ def temporal_analysis_article(weblog, temporal_analysis_weblog_start, temporal_a
     year = temporal_analysis_weblog_start.year
     month = temporal_analysis_weblog_start.month
     yesterday = temporal_analysis_weblog_start.day
-    for day in tqdm.tqdm(t_days):
+    for day in t_days:
         if day < yesterday: month += 1
         if month > 12:
             month = 1
@@ -169,15 +219,15 @@ def temporal_analysis_article(weblog, temporal_analysis_weblog_start, temporal_a
             hour_weblog=t_weblog[t_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))>start_time]
             hour_weblog=hour_weblog[hour_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))<end_time]
             
-            hour_weblog=hour_weblog[(hour_weblog.requested_category == 'article') &  (hour_weblog.referrer_category == 'article')]
+            hour_weblog=hour_weblog[(hour_weblog['requested_'+classification_column_transaction] == transaction) &  (hour_weblog['referrer_'+classification_column_transaction] == transaction)]
             
             # number of requests article article per hour
             timeseries_data['t_activity_article'][counter:counter+6]=hour_weblog.shape[0]
             
-            hour_weblog=hour_weblog[hour_weblog.requested_topic != hour_weblog.referrer_topic]
+            hour_weblog=hour_weblog[hour_weblog['requested_'+classification_column_diversity] != hour_weblog['referrer_'+classification_column_diversity]]
 
-            #number of requests article article that have changed topic
-            timeseries_data['t_activity_article_change_topic'][counter:counter+6] = hour_weblog.shape[0]
+            #number of requests article article that have changed class
+            timeseries_data['t_activity_article_change_class'][counter:counter+6] = hour_weblog.shape[0]
             # Aux
             counter+=6
             hour+=6
@@ -188,15 +238,21 @@ def temporal_analysis_article(weblog, temporal_analysis_weblog_start, temporal_a
         print("     Temporal analysis on number of article computed in %.1f seconds."%(timelib.time() - start_time_tot))
     return timeseries_data;
 
-def temporal_analysis_article_day(weblog, temporal_analysis_weblog_start, temporal_analysis_weblog_end, weblog_column_dict,verbose = False):
+def temporal_analysis_article_day(weblog,classification_column_diversity, classification_column_transaction, transaction, temporal_analysis_weblog_start, temporal_analysis_weblog_end, weblog_column_dict,verbose = False):
     """
     Calculate temporal (each day) number of requests article -> article and 
-    number of requests article -> article that have changed topic
+    number of requests article -> article that have changed class
     
     Parameters
     ----------
     weblog: pandas dataframe of requests
     
+    classification_column: pandas dataframe column wanted to be analysed
+    
+    classification_column_transaction: pandas dataframe column wanted to be selected for transaction
+    
+    transaction: string, belonging to the items of classification_column_transaction
+
     temporal_analysis_weblog_start: start timestamp
    
     temporal_analysis_weblog_end: end timestamp
@@ -221,7 +277,7 @@ def temporal_analysis_article_day(weblog, temporal_analysis_weblog_start, tempor
     else :
         t_days = list(range(int(start_day),int(end_day)+1))
     t_hours=list(range(0,24))
-    column_names = ['start_time','end_time','t_activity_article','t_activity_article_change_topic']
+    column_names = ['start_time','end_time','t_activity_article','t_activity_article_change_class']
     timeseries_data=pd.DataFrame(columns=column_names)
     for columns in timeseries_data:
         timeseries_data[columns] = np.zeros(len(t_days)*len(t_hours))
@@ -230,7 +286,7 @@ def temporal_analysis_article_day(weblog, temporal_analysis_weblog_start, tempor
     year = temporal_analysis_weblog_start.year
     month = temporal_analysis_weblog_start.month
     yesterday = temporal_analysis_weblog_start.day
-    for day in tqdm.tqdm(t_days):
+    for day in t_days:
         if day < yesterday: month += 1
         if month > 12:
             month = 1
@@ -243,15 +299,15 @@ def temporal_analysis_article_day(weblog, temporal_analysis_weblog_start, tempor
         day_weblog=t_weblog[t_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))>start_time]
         day_weblog=day_weblog[day_weblog[weblog_column_dict['timestamp_column']].apply(lambda x: pd.Timestamp(x))<end_time]
         
-        day_weblog=day_weblog[(day_weblog.requested_category == 'article') &  (day_weblog.referrer_category == 'article')]
+        day_weblog=day_weblog[(day_weblog['requested_'+classification_column_diversity] == transaction) &  (day_weblog['referrer_'+classification_column_diversity] == transaction)]
         
         # number of requests article article per hour
         timeseries_data['t_activity_article'][counter:counter+24]=day_weblog.shape[0]
         
-        day_weblog=day_weblog[day_weblog.requested_topic != day_weblog.referrer_topic]
+        day_weblog=day_weblog[day_weblog['requested_'+classification_column_diversity] != day_weblog['referrer_'+classification_column_diversity]]
 
-        #number of requests article article that have changed topic
-        timeseries_data['t_activity_article_change_topic'][counter:counter+24] = day_weblog.shape[0]
+        #number of requests article article that have changed class
+        timeseries_data['t_activity_article_change_class'][counter:counter+24] = day_weblog.shape[0]
         # Aux
         counter+=24
         del day_weblog
@@ -387,7 +443,7 @@ def plot_temporal(timeseries_data, group_names, micd = False, filename = None, v
 def plot_temporal_article(timeseries_data, filename = None, verbose = False):
     """
     Plot temporal analysis with timeseries_data calculated temporal_analysis_article, 
-    plot #(requests art-art that have changed topic)/#(requests art-art) 
+    plot #(requests art-art that have changed class)/#(requests art-art) 
     
     Parameters
     ----------
@@ -419,7 +475,7 @@ def plot_temporal_article(timeseries_data, filename = None, verbose = False):
     # Figure setting
     fig,ax1=plt.subplots(1,1)
     # Activity
-    ax1.plot(range(len(timeseries_data['t_activity_article'])),np.convolve(timeseries_data['t_activity_article_change_topic']/timeseries_data['t_activity_article'],filter_array,mode='same'))
+    ax1.plot(range(len(timeseries_data['t_activity_article'])),np.convolve(timeseries_data['t_activity_article_change_class']/timeseries_data['t_activity_article'],filter_array,mode='same'))
 
     ax1.set_xticks([12+n*24 for n in range(0,number_of_days)])
     ax1.set_xticklabels(list_date,fontsize=11)
@@ -430,7 +486,7 @@ def plot_temporal_article(timeseries_data, filename = None, verbose = False):
         ax1.axvline(x=n*24,color='k',linestyle=':')
     for we_day in we_days: # painting the weekend days
         ax1.axvspan(24*(we_day-first_date.day), 24*(we_day-first_date.day+1), facecolor='green', edgecolor='none', alpha=.2)
-    ax1.set_title('#(requêtes art-art qui changent de topic)/#(requêtes art-art)',fontsize=14)
+    ax1.set_title('#(requêtes art-art qui changent de class)/#(requêtes art-art)',fontsize=14)
     ax1.set_ylabel('Requests',fontsize=14)
     #ax_names= ['Total','Sessions \nwith more than \n4 requests','Sessions\noriginated\nin search\npages','Sessions\noriginated\nin social\nplatforms']
 

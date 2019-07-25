@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from . import function
 pd.options.mode.chained_assignment = None
 
-def proportion_group(weblog, session_data,analysis_column, topics, group_names, verbose = False):
+def proportion_group(weblog, session_data,classification_column, classifications, group_names, verbose = False):
     """
     Calculate and return proportion_data: number of requests and entropy for each group
     
@@ -15,9 +15,9 @@ def proportion_group(weblog, session_data,analysis_column, topics, group_names, 
         
         session_data: pandas dataframe of sessions
         
-        analysis_column: pandas dataframe column for proportion analysis
+        classification_column: pandas dataframe column for proportion analysis
         
-        topics: list of items in analysis_column wanted to analyse
+        classifications: list of items in classification_column wanted to be analysed
         
         group_names: list of sessions group wanted to analyse
         
@@ -37,9 +37,9 @@ def proportion_group(weblog, session_data,analysis_column, topics, group_names, 
     for group_name in group_names:    
         list_sessions = session_data[session_data[group_name]].session_id.values
         weblog_tmp=weblog[weblog.session_id.isin(list_sessions)]
-        weblog_tmp.loc[weblog_tmp[analysis_column]=='None',analysis_column]='Other'
-        pa,pa_names = function.proportional_abundance(weblog_tmp,analysis_column)
-        pa = function.rearrange_pa_relative_labels(pa,topics,pa_names)
+        weblog_tmp.loc[weblog_tmp[classification_column]=='None',classification_column]='Other'
+        pa,pa_names = function.proportional_abundance(weblog_tmp,classification_column)
+        pa = function.rearrange_pa_relative_labels(pa,classifications,pa_names)
         proportions_matrix.append(pa)
         entropy_matrix.append(function.ShannonEntropy(pa, normalize = True))
         
@@ -47,16 +47,16 @@ def proportion_group(weblog, session_data,analysis_column, topics, group_names, 
 
     # Total
     weblog=weblog.copy(deep=True)
-    weblog.loc[weblog[analysis_column]=='None',analysis_column]='Other'
-    pa,pa_names = function.proportional_abundance(weblog,analysis_column)
-    pa = function.rearrange_pa_relative_labels(pa,topics,pa_names)
+    weblog.loc[weblog[classification_column]=='None',classification_column]='Other'
+    pa,pa_names = function.proportional_abundance(weblog,classification_column)
+    pa = function.rearrange_pa_relative_labels(pa,classifications,pa_names)
     proportions_matrix.append(pa)
     entropy_matrix.append(function.ShannonEntropy(pa, normalize = True))
 
     index_names = [group_name for group_name in group_names]
     index_names.append("Total")
     
-    proportion_data = pd.DataFrame(data=proportions_matrix,columns=topics,index=index_names)
+    proportion_data = pd.DataFrame(data=proportions_matrix,columns=classifications,index=index_names)
     if verbose == True:
         print("     Aggregated diversity computed in %.1f seconds."%(timelib.time()-start_time))
     

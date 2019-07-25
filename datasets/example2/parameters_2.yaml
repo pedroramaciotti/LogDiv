@@ -1,15 +1,15 @@
 input_files:
-    weblog_file: '/home/alexandre/Documents/logdiv_git/datasets/example2/log_2.csv'
-    pages_file: '/home/alexandre/Documents/logdiv_git/datasets/example2/items_2.csv'
+    weblog_file: './log_2.csv'
+    pages_file: './items_2.csv'
 weblog_format:
     user_id_column: userID
     timestamp_column: timestamp
     referrer_page_column: referrer_itemID
     requested_page_column: requested_itemID
 pages_data_format:
-    page_id_column: itemID
-    category_column: class1
-    topic_column: class2
+    item_id_column: itemID
+    classification_1_column: class1
+    classification_2_column: class2
 temporal_filtering:
     temporal_start: '2019-7-4 00:00:00'
     temporal_end: '2019-7-4 23:59:59'

@@ -1,9 +1,9 @@
 import pandas as pd
-import logdiv
+import logdivv as logdiv
 
 
 # retrieve YAML file
-filename = 'parameters_1.yaml'
+filename = './parameters_1.yaml'
 parameters= logdiv.file_functions.read_parameters(filename)
 
 # retrieving weblog columns, pages columns from parameters file
@@ -28,7 +28,7 @@ weblog.drop_duplicates(subset=[weblog_columns_dict['requested_page_column'],\
                                weblog_columns_dict['referrer_page_column'],'session_id'],inplace=True)
 
 # including page classifications in log
-weblog = logdiv.weblogtransform.assign_page_classification(weblog,pages,weblog_columns_dict,pages_columns_dict)
+weblog = logdiv.weblogtransform.assign_page_classification(weblog,pages,['class1','class2'],weblog_columns_dict,pages_columns_dict)
 
 # retrieving features to be computed
 session_features=logdiv.file_functions.retrieve_session_features(parameters)
@@ -59,7 +59,7 @@ session_data_threshold[session_features_t] = logdiv.sessionspaces.session_transf
 logdiv.sessionspaces.plot_hist_requests(session_data,requests_threshold_per_session)
 
 # retrieving cluster_id with KMeans method
-session_data_threshold['supervised_cluster_id_'] = logdiv.sessionspaces.supervised(session_data_threshold, session_features_t, n_cluster = 3, verbose = True)
+session_data_threshold['supervised_cluster_id_'] = logdiv.sessionspaces.kmeans(session_data_threshold, session_features_t, n_cluster = 3, verbose = True)
 
 # Group composition
 session_data['>2_requests'] = False
@@ -71,15 +71,14 @@ session_data['2_requests'] = False
 session_data.loc[session_data.requests == 2, '2_requests'] = True
 
 # Aggregated diversity
-proportion_data, entropy_matrix = logdiv.divanalysis.proportion_group(weblog, session_data,'requested_topic',\
-                                                                      pages[pages_columns_dict['topic_column']].unique(),['2_requests','>2_requests'],verbose = True)
+proportion_data, entropy_matrix = logdiv.divanalysis.proportion_group(weblog, session_data,'requested_class1',['x', 'y', 'z'],\
+                                                                      ['2_requests','>2_requests'],verbose = True)
 logdiv.divanalysis.plot_aggregated(proportion_data, entropy_matrix, requests_threshold_per_session)
 
 # Classification diversity
 browsing_matrix, markov_matrix, diversifying_matrix,change_browsing_matrix = \
-            logdiv.divanalysis.classification_diversity(weblog, pages[pages_columns_dict['category_column']].unique(), requests_threshold_per_session,verbose = True)
+            logdiv.divanalysis.classification_diversity(weblog, 'class1',['x', 'y', 'z'],'class2', requests_threshold_per_session,verbose = True)
 
-categories = pages[pages_columns_dict['category_column']].unique()
 # plotting matrix
-logdiv.divanalysis.plot_pattern_matrix(browsing_matrix,list(categories)+['marg.'],ticks_theme='greek',\
+logdiv.divanalysis.plot_pattern_matrix(browsing_matrix,['x', 'y', 'z']+['marg.'],\
                                 xlabel='Browsing Matrix',verbose = True)

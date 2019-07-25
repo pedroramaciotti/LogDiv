@@ -6,7 +6,7 @@ import numpy as np
 
 def compute_count_matrix(weblog,referrer_column,requested_column,labels=[]):
     """
-    Calculate matrix with category of pages alon lines and colupns,
+    Calculate matrix with classification of pages alon lines and colupns,
     number of requests that make transaction in cases
     """
     # retrieving labels
@@ -43,7 +43,7 @@ def compute_count_matrix(weblog,referrer_column,requested_column,labels=[]):
 
 def compute_change_matrix(weblog,referrer_column,requested_column,diversity_columns,labels=[]):
     """
-    Same as count matrix, but with just requests that have changed topic
+    Same as count matrix, but with just requests that have changed classification_diversity
     """
     # retrieving labels
     if len(labels)==0:

@@ -3,9 +3,9 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 import time as timelib
 
-def supervised(session_data_clustering, features, n_cluster = 3, verbose = False):
+def kmeans(session_data_clustering, features, n_cluster = 3, verbose = False):
     """
-    Compute supervised clustering using K-means
+    Compute supervised clustering using K-means funtion from sklearn package
 
     Parameters
     ----------         
@@ -35,7 +35,7 @@ def supervised(session_data_clustering, features, n_cluster = 3, verbose = False
 
 def hierarchical(session_data_clustering, list_features, list_n_clusters, verbose = False):
     """
-    Compute hierarchical clustering using K-means 
+    Compute hierarchical clustering using K-means function from sklearn package
     
     Parameters
     ----------         
@@ -76,9 +76,9 @@ def hierarchical(session_data_clustering, list_features, list_n_clusters, verbos
         
     return session_data_clustering["hc_id"];
 
-def unsupervised(session_data_clustering, features, verbose = False):
+def dbscan(session_data_clustering, features, verbose = False):
     """
-    Compute unsupervised clustering using dbscan
+    Compute unsupervised clustering using dbscan function from sklearn package
     
     Parameters
     ----------         

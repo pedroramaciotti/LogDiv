@@ -19,7 +19,7 @@ LogDiv requires:
 * Numpy - Essential
 * Pandas - Essential
 * Matplotlib - Essential
-* tqdm - Optionnal: progression bar
+* tqdm - Optionnal: progression bar, only one function requires it
 * Graph-tool - Optionnal: only one function requires it
 
 
@@ -29,6 +29,8 @@ $ pip install panda
 $ pip install matplotlib 
 $ pip install tqdm 
 ```
+
+Installing Graph-tool is more complicated: https://git.skewed.de/count0/graph-tool/wikis/installation-instructions
 
 ### Installing
 
@@ -52,14 +54,26 @@ LogDiv needs a specific format of entries to run:
 
 - A file describing all pages visited under a table format, whose fields are:
 * item ID
-* topic 
-* category
+* classification 1 
+* classification 2
+* ...
 
 ### YAML file
 
 Codes that use LogDiv are directed by a YAML file: if you want to modify entry files, or the features you want to compute, 
 you just need to modify the YAML file, not the code itself.
 This file is self-explanatory.
+
+### Documentation
+
+If you want precision on a function of LogDiv: 
+* what is the purpose of the function of LogDiv
+* what these functions take in entry
+* what they return
+you need to run in a Console Python:
+```python
+>>> help(function)
+```
 
 ## Examples
 
@@ -106,6 +120,11 @@ The following example illustrates the entries format of the package.
 |v9  |y       |\alpha  |f      |
 |v10 |z       |\gammma |h      |
 
+If you want to run example 1, you need to be in the directory datasets/example1, and run:
+```shell
+$ python3 example_1.py parameters_1.yaml
+```
+
 ### Example 2
 
 ![](example_2.png)
@@ -120,6 +139,11 @@ The file describing pages is more concrete than the one in example 1:
 |item0  |Politics|Europe       |
 |item1  |Health  |Asia         |
 |item2  |Politics|North America|
+
+If you want to run example 2, you need to be in the directory datasets/example2, and run:
+```shell
+$ python3 example_2.py parameters_2.yaml
+```
 
 
 

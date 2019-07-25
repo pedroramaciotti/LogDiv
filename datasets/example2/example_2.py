@@ -1,5 +1,5 @@
 import pandas as pd
-import logdivv as logdiv
+import logdiv
 
 
 ###########################################

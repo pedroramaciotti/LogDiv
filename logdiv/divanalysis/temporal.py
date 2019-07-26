@@ -373,17 +373,13 @@ def plot_temporal(timeseries_data, group_names, micd = False, filename = None, v
     ax1.set_ylabel('Requests',fontsize=14)
     #ax_names= ['Total','Sessions \nwith more than \n4 requests','Sessions\noriginated\nin search\npages','Sessions\noriginated\nin social\nplatforms']
     ax_names = ['Total'] + group_names 
-    ax1.legend(ax_names,bbox_to_anchor=(2.5,0)) # option to deplace the legend
+    ax1.legend(ax_names,bbox_to_anchor=(2.4,-.7)) # option to deplace the legend
     # Consumed diversity
-    #ax2.plot(range(len(timeseries_data['t_consumed_diversity_total'])),\
-     #        np.convolve(np.power(2,timeseries_data['t_consumed_diversity_total']),filter_array,mode='same'))
     ax2.plot(range(len(timeseries_data['t_consumed_diversity_total'])),\
-             np.convolve(timeseries_data['t_consumed_diversity_total'],filter_array,mode='same'))
+             np.convolve(np.power(2,timeseries_data['t_consumed_diversity_total']),filter_array,mode='same'))
     for group_name in group_names:
-        #ax2.plot(range(len(timeseries_data['t_consumed_diversity_'+group_name])),\
-         #        np.convolve(np.power(2,timeseries_data['t_consumed_diversity_'+group_name]),filter_array,mode='same'))
         ax2.plot(range(len(timeseries_data['t_consumed_diversity_'+group_name])),\
-                 np.convolve(timeseries_data['t_consumed_diversity_'+group_name],filter_array,mode='same'))
+                 np.convolve(np.power(2,timeseries_data['t_consumed_diversity_'+group_name]),filter_array,mode='same'))
     ax2.set_xticks([12+n*24 for n in range(0,number_of_days)])
     #ax2.set_xticklabels(list_date,fontsize=11)
     ax2.set_xticklabels(['','',''],fontsize=11)
@@ -432,7 +428,7 @@ def plot_temporal(timeseries_data, group_names, micd = False, filename = None, v
     weeks_in_graph=number_of_days/7
     fig.set_size_inches(week_graph_length*weeks_in_graph, 5)
     if filename is not None:
-        plt.savefig('../Figures/%s.pdf'%filename, bbox_inches = 'tight') # bbox in order to save the legend
+        plt.savefig('./%s.pdf'%filename, bbox_inches = 'tight') # bbox in order to save the legend
     plt.show()
     if verbose == True:
         print("     Temporal analysis plotted in %.1f seconds."%(timelib.time() - start_time))
@@ -495,7 +491,7 @@ def plot_temporal_article(timeseries_data, filename = None, verbose = False):
     weeks_in_graph=number_of_days/7
     fig.set_size_inches(week_graph_length*weeks_in_graph, 5)
     if filename is not None:
-        plt.savefig('/home/alexandre/Documents/alex/Figures/%s.pdf'%filename, bbox_inches = 'tight') # bbox in order to save the legend
+        plt.savefig('./%s.pdf'%filename, bbox_inches = 'tight') # bbox in order to save the legend
     plt.show()
     if verbose == True:
         print("     Temporal analysis plotted in %.1f seconds."%(timelib.time() - start_time))

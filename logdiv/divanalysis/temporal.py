@@ -371,9 +371,9 @@ def plot_temporal(timeseries_data, group_names, micd = False, filename = None, v
         ax1.axvspan(24*(we_day-first_date.day), 24*(we_day-first_date.day+1), facecolor='green', edgecolor='none', alpha=.2)
     ax1.set_title('Hourly Activity',fontsize=14)
     ax1.set_ylabel('Requests',fontsize=14)
-    #ax_names= ['Total','Sessions \nwith more than \n4 requests','Sessions\noriginated\nin search\npages','Sessions\noriginated\nin social\nplatforms']
     ax_names = ['Total'] + group_names 
-    ax1.legend(ax_names,bbox_to_anchor=(2.4,-.7)) # option to deplace the legend
+    x_legend = 1.09- 0.05*number_of_days
+    ax1.legend(ax_names,loc='best', bbox_to_anchor=(x_legend, 0., 0.5, 0.5)) # option to deplace the legend
     # Consumed diversity
     ax2.plot(range(len(timeseries_data['t_consumed_diversity_total'])),\
              np.convolve(np.power(2,timeseries_data['t_consumed_diversity_total']),filter_array,mode='same'))

@@ -23,7 +23,7 @@ def assign_page_classification(weblog,pages,classification_columns,weblog_column
     for classification_column in classification_columns:
         
         weblog['requested_'+classification_column]=weblog[weblog_columns_dict['requested_page_column']].map(pd.Series(index=pages\
-                          [pages_columns_dict['page_id_column']].values, data=pages[classification_column].values))
+                          [pages_columns_dict['item_id_column']].values, data=pages[classification_column].values))
         weblog['referrer_'+classification_column]=weblog[weblog_columns_dict['referrer_page_column']].map(pd.Series(index=pages\
-                          [pages_columns_dict['page_id_column']].values,data=pages[classification_column].values))
+                          [pages_columns_dict['item_id_column']].values,data=pages[classification_column].values))
     return weblog;

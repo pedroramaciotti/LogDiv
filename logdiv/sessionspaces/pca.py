@@ -98,7 +98,6 @@ def scatterplot(session_data_pca, components, feature_names, cluster_type, verbo
         
     fig, (ax1, ax2) = plt.subplots(1,2,figsize=(8,4))
     rows = feature_names
-    rows = ['Nb de requêtes','Durée','Star-chain \nIndex','Écart type durée \nentre requêtes','Durée moyenne \nentre requêtes']
     columns = ["PC-1","PC-2"]
     matrix = np.transpose(components)
     ax1.matshow(matrix, cmap="coolwarm", clim=[-1, 1])

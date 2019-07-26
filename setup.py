@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
 	name='logdiv',
-	version='0.0.2.3',
+	version='0.0.2.6',
 	author='Alexandre Wilmet',
 	author_email='wilmet.alex@gmail.com',
 	description='A package to mesure diversity of log files',

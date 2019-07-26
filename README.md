@@ -19,16 +19,18 @@ LogDiv requires:
 * Numpy - Essential
 * Pandas - Essential
 * Matplotlib - Essential
-* yaml - Essential
-* tqdm - Optionnal: progression bar, only one function requires it
-* Graph-tool - Optionnal: only one function requires it
+* pyyaml - Essential
+* scikit-learn - Essential
+* tqdm - Optional: progression bar, only one function requires it
+* Graph-tool - Optional: only one function requires it
 
 
 ```shell
 $ python3 -m pip install numpy
 $ python3 -m pip install panda
 $ python3 -m pip install matplotlib 
-$ python3 -m pip install yaml
+$ python3 -m pip install pyyaml
+$ python3 -m pip install scikit-learn
 $ python3 -m pip install tqdm 
 ```
 

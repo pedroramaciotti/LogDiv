@@ -11,7 +11,7 @@ def hist1D(feature, log_scale = False, filename = None):
     plt.ylabel('numbers of sessions')
     plt.title('%s histogram 1D'%feature.name)
     if filename is not None:
-        plt.savefig("../Figures/%s.pdf"%filename)
+        plt.savefig("./%s.pdf"%filename)
     plt.show()
     plt.close()
     return;    
@@ -27,7 +27,7 @@ def hist2D(features_1, features_2, log_scale = False, filename = None):
     plt.ylabel('%s'%features_2.name)
     plt.title('%s %s histogram 2D'%(features_1.name,features_2.name))
     if filename is not None:
-        plt.savefig("../Figures/%s.pdf"%filename)
+        plt.savefig("./%s.pdf"%filename)
     plt.show()
     plt.close()
     return;
@@ -56,7 +56,7 @@ def plot_hist_requests(session_data, threshold, filename = None):
     plt.xlabel('Number of Requests')
     plt.ylabel('Number of Sessions')
     if filename is not None:
-        fig.savefig('../Figures/%s.pdf'%filename, format='pdf')
+        fig.savefig('./%s.pdf'%filename, format='pdf')
     plt.show()
     plt.clf()
     plt.close()

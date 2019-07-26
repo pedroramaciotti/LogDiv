@@ -24,6 +24,8 @@ def session_draw_bis_melty(sessions_id, weblog,weblog_columns_dict):
     """
     Draw the graph of sessions with sessions_id given in entry
     """
+    from graph_tool.all import Graph
+    from graph_tool.all import graph_draw
     session = weblog[weblog.session_id==sessions_id]
     session = session.rename(index=str,columns = {weblog_columns_dict['requested_page_column']:'requested_page',\
                                                   weblog_columns_dict['referrer_page_column']:'referrer_page'})
@@ -42,13 +44,15 @@ def session_draw_bis_melty(sessions_id, weblog,weblog_columns_dict):
         else:
             halo[v[row.requested_page]] = False
     session.apply(lambda x: g.add_edge(v[x.referrer_page], v[x.requested_page]), axis=1)
-    graph_draw(g, vertex_halo=halo, output="../graph_dump/_session"+str(sessions_id)+".png")
+    graph_draw(g, vertex_halo=halo, output="./_session"+str(sessions_id)+".png")
     return;
     
 def session_draw_bis(sessions_id, weblog,weblog_columns_dict):
     """
     Draw the graph of sessions with sessions_id given in entry
     """
+    from graph_tool.all import Graph
+    from graph_tool.all import graph_draw
     session = weblog[weblog.session_id==sessions_id]
     session = session.rename(index=str,columns = {weblog_columns_dict['requested_page_column']:'requested_page',\
                                                   weblog_columns_dict['referrer_page_column']:'referrer_page'})
@@ -211,7 +215,7 @@ def mosaic(session_data, weblog, features, type_cluster, weblog_columns_dict,fil
             img = mpimg.imread("../graph_dump/_session"+str(sessions[4])+".png")
             plt.imshow(img)
             if filename is not None:    
-                plt.savefig('../Figures/%s_%s.pdf'%(filename,str(cluster_id)), format='pdf')
+                plt.savefig('./%s_%s.pdf'%(filename,str(cluster_id)), format='pdf')
             plt.show()
             plt.clf()
             plt.close()

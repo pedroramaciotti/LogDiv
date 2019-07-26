@@ -41,7 +41,7 @@ def boxplot(session_data, cluster_type, features, filename = None,verbose = Fals
     ax[2].set_xlabel('\nCluster',fontsize=18)
     plt.tight_layout()
     if filename is not None:
-        plt.savefig('../Figures/%s.pdf'%filename)
+        plt.savefig('./%s.pdf'%filename)
     plt.show()
     plt.clf()
     plt.close()

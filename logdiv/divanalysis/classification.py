@@ -183,7 +183,7 @@ def plot_pattern_matrix(matrix,classification_wanted_transaction,ticks_theme='in
                 texts.append(text)
     fig.tight_layout()
     if filename is not None:
-        plt.savefig("/home/alexandre/Documents/Melty/Experience/%s.pdf"%filename, bbox_inches = 'tight')
+        plt.savefig("./%s.pdf"%filename, bbox_inches = 'tight')
         #plt.savefig("/home/alexandre/Documents/alex/Figures/%s.pdf"%filename, bbox_inches = 'tight')
     plt.show() 
     
@@ -192,7 +192,8 @@ def plot_pattern_matrix(matrix,classification_wanted_transaction,ticks_theme='in
         ax.text(0,1,'\n'.join(text_box), transform=ax.transAxes, fontsize=10,
                 verticalalignment='top', bbox=props) 
         plt.axis('off')
-        plt.savefig("/home/alexandre/Documents/alex/Figures/test.pdf", bbox_inches = 'tight')
+        if filename is not None:
+            plt.savefig("./legend.pdf", bbox_inches = 'tight')
         plt.show()
     
     if verbose == True:

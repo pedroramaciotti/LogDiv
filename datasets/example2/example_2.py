@@ -101,6 +101,9 @@ logdiv.sessionspaces.plot_explained_variance(explained_variance_ratio, threshold
 logdiv.sessionspaces.scatterplot(session_data_pca, components[:2], session_features_t,'hierarchical_cluster_id', verbose = True)
 logdiv.sessionspaces.scatterplot_centroids(session_data_pca,'hierarchical_cluster_id', components[:2], session_features_t,verbose=True)
 
+# Boxplots
+logdiv.sessionspaces.boxplot(session_data_threshold,'hierarchical_cluster_id',session_features)
+
 #####################
 # Group composition #
 #####################
@@ -115,6 +118,8 @@ session_data.loc[session_data.requests == 4, '4_requests'] = True
 ##########################
 # Diversity analysis     #
 ##########################
+
+
 
 # Aggregated diversity
 proportion_data, entropy_matrix = logdiv.divanalysis.proportion_group(\

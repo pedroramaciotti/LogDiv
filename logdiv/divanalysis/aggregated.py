@@ -90,7 +90,7 @@ def plot_aggregated(proportion_data, entropy_matrix, threshold=2, filename = Non
     ax.set_xticklabels(['','','','','',''])
     plt.tight_layout()
     if filename is not None:
-        plt.savefig('../Figures/%s.pdf'%filename)
+        plt.savefig('./%s.pdf'%filename)
     plt.show()
     plt.close()    
     return;

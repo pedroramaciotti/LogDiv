@@ -66,7 +66,7 @@ def plot_explained_variance(explained_variance_ratio, threshold_explained_varian
     plt.title("Explained variance ratio of each component")
     plt.legend()
     if filename is not None:
-        plt.savefig("../Figures/%s.pdf"%filename)
+        plt.savefig("./%s.pdf"%filename)
     plt.show()
 
     if verbose == True:
@@ -96,7 +96,6 @@ def scatterplot(session_data_pca, components, feature_names, cluster_type, verbo
         start_time = timelib.time()
         print("\n   * Plotting scatterplot of Principal Component 1 and 2 ...")
         
-    plt.figure()
     fig, (ax1, ax2) = plt.subplots(1,2,figsize=(8,4))
     rows = feature_names
     rows = ['Nb de requêtes','Durée','Star-chain \nIndex','Écart type durée \nentre requêtes','Durée moyenne \nentre requêtes']
@@ -122,7 +121,7 @@ def scatterplot(session_data_pca, components, feature_names, cluster_type, verbo
     ax2.set_title("Scatterplot of PC-1 and PC-2")
     ax2.invert_yaxis()
     if filename is not None:
-        plt.savefig("../Figures/%s.png"%filename)
+        plt.savefig("./%s.png"%filename)
     plt.show() 
     
     if verbose == True:
@@ -151,7 +150,6 @@ def scatterplot_centroids(session_data_pca,cluster_type,components,feature_names
         start_time = timelib.time()
         print("\n   * Plotting scatterplot with clusters of Principal Component 1 and 2 ...")
         
-    plt.figure()
     fig, (ax1, ax2) = plt.subplots(1,2,figsize=(8,4))
     # Explanation of components
     rows = feature_names
@@ -207,7 +205,7 @@ def scatterplot_centroids(session_data_pca,cluster_type,components,feature_names
     if verbose == True:
         print("    Plot completed in %.1f seconds."%(timelib.time() - start_time))
     if filename is not None:
-        plt.savefig("../Figures/%s.pdf"%filename)
+        plt.savefig("./%s.pdf"%filename)
     plt.show()
     plt.clf()
     plt.close()

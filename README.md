@@ -46,9 +46,9 @@ $ pip install logdiv
 
 ## Specification
 
-### Entries format
+### Inputs format
 
-LogDiv needs a specific format of entries to run:
+LogDiv needs a specific format of inputs to run:
 
 - A file describing all requests under a table format, whose fields are:
 * user ID
@@ -64,7 +64,7 @@ LogDiv needs a specific format of entries to run:
 
 ### YAML file
 
-Codes that use LogDiv are directed by a YAML file: if you want to modify entry files, or the features you want to compute, 
+Codes that use LogDiv are directed by a YAML file: if you want to modify input files, or the features you want to compute, 
 you just need to modify the YAML file, not the code itself.
 
 YAML file are similar to JSON file, once you load them, they take the form of a dictionnary. In your codes, you have for instance 
@@ -75,7 +75,7 @@ change the value in the YAML file. This allows to make less mistakes and take le
 
 If you want precision on a function of LogDiv: 
 * what is the purpose of the function
-* what these functions take in entry
+* what these functions take in input
 * what they return
 
 you need to run in a Console Python:
@@ -92,7 +92,7 @@ You dispose of two examples to familiarize yourself with LogDiv:
 These examples (dataset, script and yaml file) can be found in *datasets* directory. These YAML files are self-explanatory.
 
 ### Example 1
-The following example illustrates the entries format of the package.
+The following example illustrates the inputs format of the package.
 
 ![](example.png)
 

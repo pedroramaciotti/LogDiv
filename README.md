@@ -19,6 +19,7 @@ LogDiv requires:
 * Numpy - Essential
 * Pandas - Essential
 * Matplotlib - Essential
+* yaml - Essential
 * tqdm - Optionnal: progression bar, only one function requires it
 * Graph-tool - Optionnal: only one function requires it
 
@@ -27,6 +28,7 @@ LogDiv requires:
 $ python3 -m pip install numpy
 $ python3 -m pip install panda
 $ python3 -m pip install matplotlib 
+$ python3 -m pip install yaml
 $ python3 -m pip install tqdm 
 ```
 
@@ -62,7 +64,10 @@ LogDiv needs a specific format of entries to run:
 
 Codes that use LogDiv are directed by a YAML file: if you want to modify entry files, or the features you want to compute, 
 you just need to modify the YAML file, not the code itself.
-This file is self-explanatory.
+
+YAML file are similar to JSON file, once you load them, they take the form of a dictionnary. In your codes, you have for instance 
+a function that take a parameter that need to be changed often. You can give to your function the key of the dictionnary, and then 
+change the value in the YAML file. This allows to make less mistakes and take less time when you want to change parameters in your code.
 
 ### Documentation
 
@@ -82,7 +87,7 @@ You dispose of two examples to familiarize yourself with LogDiv:
 * Example 1 uses a short dataset to show how to use LogDiv
 * Example 2 uses a dataset of more than 100 thousands of requests to show what kind of results can be obtained
 
-These examples (dataset, script and yaml file) can be found in *datasets* directory.
+These examples (dataset, script and yaml file) can be found in *datasets* directory. These YAML files are self-explanatory.
 
 ### Example 1
 The following example illustrates the entries format of the package.
